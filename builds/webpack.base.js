@@ -32,22 +32,20 @@ module.exports = {
               }, {
                   loader: "css-loader",
                   options: {
-                    sourceMap: true
+                    minimize: {
+                      discardComments: {
+                        removeAll: true,
+                      }
+                    }
                   }
               }, {
                 loader: 'postcss-loader',
                 options: {
-                  plugins: () => [autoprefixer(
-                    { browsers: ['iOS >= 7', 'Android >= 4.1', 
-                       'last 10 Chrome versions', 'last 10 Firefox versions', 
-                       'Safari >= 6', 'ie > 8'] 
-                    }
-                  )],
+                  plugins: () => [autoprefixer],
                 },
               }, {
                 loader: "less-loader"
               },
-              
           ]
         },
         {
@@ -66,11 +64,11 @@ module.exports = {
               // art-template options (if necessary)
               // @see https://github.com/aui/art-template
           }
-      }
+        }
     ]
   },
   plugins: [
-    new webpack.BannerPlugin('版权所有，翻版必究'),
+    // new webpack.BannerPlugin('版权所有，翻版必究'),
     new webpack.DefinePlugin({
       "process.env": {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV) // default value if not specified

@@ -21,7 +21,7 @@ config.plugins.push(new webpack.optimize.UglifyJsPlugin({
         warnings: false
     },
     sourceMap: true,
-    beautify: true
+    // beautify: true
   }));
   config.plugins.push(new CleanWebpackPlugin([outPath],　 //匹配删除的文件
     {

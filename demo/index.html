@@ -5,13 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>demo</title>
-    <link rel="stylesheet" href="/index.css">
+    <script src = "./jq.js"></script>
+    <style>
+        .demo{
+            width: 600px;
+            height: 100%;
+            margin: auto;
+        }
+    </style>
+    <!-- <link rel="stylesheet" href="/index.css"> -->
 </head>
 <body>
     <div class="demo"></div>
-    <script src = "/index.js"></script>
+    <script src = "/knav.js"></script>
     <script>
-        var app = new APP({hello:'HELLO'})
+        var app = new Knav({container: document.querySelector('.demo'), 
+            list: [{
+                name: 'BILI',
+                list: [
+                    {
+                        name: 'bili',
+                        src: ' http://www.bilibili.com'
+                    },
+                    {
+                        name: 'bili',
+                        src: 'http://www.bilibili.com'
+                    },
+                    {
+                        name: 'bili',
+                        src: 'www.bilibili.com'
+                    },
+                    {
+                        name: 'bili',
+                        src: 'www.bilibili.com'
+                    },
+                ]
+            }]
+        })
     </script>
 </body>
 </html>
