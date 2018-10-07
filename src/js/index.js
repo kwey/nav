@@ -5,44 +5,25 @@ import './../css/index.less';
 import Template from './src/template';
 import Header from './src/header';
 import List from './src/list';
+import InfoSet from './src/InfoSet';
 
-class KNav {
+class Nav {
     constructor(config) {
         this.config = config;
         this.prefix =  'nav-x';
         this.container = config.container || document.createElement('div');
-        this.typeList = {
-            id: '2',
-            maxHeight: 150,
-            items: [
-                {
-                    name: '黑体',
-                    id: '1',
-                }, {
-                    name: '宋体',
-                    id: '2',
-                    disabled: true,
-                }, {
-                    name: '新宋体',
-                    id: '3',
-                }, {
-                    name: '仿宋',
-                    id: '4',
-                }, {
-                    name: '微软雅黑',
-                    id: '5',
-                }
-            ]};
-        
+        this.typeList = null;
+        this.srcList = null;
         this.init();
         return this;
     }
 
     init() {
+        this.infoSet = new InfoSet(this);
         this.template = new Template(this);
         this.header = new Header(this);
         this.list = new List(this);
-        console.log(KNav.getVersion());
+        console.log(Nav.getVersion());
     }
 
     static getVersion() {
@@ -52,4 +33,4 @@ class KNav {
     }
 }
 
-export default KNav;
+export default Nav;

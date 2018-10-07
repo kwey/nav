@@ -1,4 +1,4 @@
-// import Utils from '../utils';
+import Utils from '../utils';
 import UI from "../../../ui/src/js";
 
 
@@ -14,7 +14,7 @@ class Header {
         const prefix = this.prefix;
         this.container.append(this.TPL());
 
-        this.type = new UI.Select($(`.${prefix}-type`)[0], this.nav.typeList).on('input', (e) => {
+        this.typeInfo = new UI.Select($(`.${prefix}-type`)[0], this.nav.typeList).on('input', (e) => {
             console.log(e);
             this.type.reload();
         });
@@ -24,6 +24,7 @@ class Header {
             name: '上传',
         }).on('click', (e) => {
             console.log(e);
+            this.upLoadSrc();
         });
         this.download = new UI.Button($(`.${prefix}-download-btn`)[0], {
             name: '下载',
@@ -47,7 +48,16 @@ class Header {
             </div>
             `;
     }
-
+    upLoadSrc() {
+        const type = this.typeInfo.value();
+        const name = $.trim(this.nameInfo.value());
+        const src = $.trim(this.srcInfo.value());
+        if (name && src) {
+            Utils.setLocalSettings();
+        } else {
+            
+        }
+    }
 }
 
 export default Header;

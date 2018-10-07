@@ -1,9 +1,10 @@
 {
-  "name": "nav",
+  "name": "nav-kwe",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "author": "kwe",
+  "keyword": "kwe nav",
   "license": "ISC",
   "scripts": {
     "start": "webpack",

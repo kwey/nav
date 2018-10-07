@@ -1,3 +1,3 @@
-const KNav = require('./js/index').default;
+const Nav = require('./js/index').default;
 
-module.exports = KNav;
+module.exports = Nav;
