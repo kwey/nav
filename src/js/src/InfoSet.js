@@ -55,16 +55,6 @@ class InfoSet {
         }
         
     }
-    upLoadSrc() {
-        const type = this.typeInfo.value();
-        const name = $.trim(this.nameInfo.value());
-        const src = $.trim(this.srcInfo.value());
-        if (name && src) {
-            Utils.setLocalSettings();
-        } else {
-            
-        }
-    }
 }
 
 export default InfoSet;
