@@ -5,7 +5,7 @@ import './../css/index.less';
 import Template from './src/template';
 import Header from './src/header';
 import List from './src/list';
-import InfoSet from './src/InfoSet';
+import InfoSet from './src/info-set';
 
 class Nav {
     constructor(config) {
@@ -13,7 +13,7 @@ class Nav {
         this.prefix =  'nav-x';
         this.container = config.container || document.createElement('div');
         this.typeList = [];
-        this.srcList = [];
+        this.srcList = {};
         this.init();
         return this;
     }

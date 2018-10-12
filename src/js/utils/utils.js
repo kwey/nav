@@ -1,57 +1,58 @@
 
 
 class Utils {
+    static browser() {
+        return {
+            get version() {
+                const ua = navigator.userAgent.toLowerCase();
+                const isSafari = /(webkit)[ \/]([\w.]+).*(version)[ \/]([\w.]+).*(safari)[ \/]([\w.]+)/.test(ua)
+                    || /(version)(applewebkit)[ \/]([\w.]+).*(safari)[ \/]([\w.]+)/.test(ua);
+                const match = /(chrome)[ \/]([\w.]+)/.exec(ua) || '';
+                const matched = {
+                    browser: match[5] || match[3] || match[1] || '',
+                    version: match[4] || match[2] || '0',
+                };
+                let version = 0;
+                if (matched.browser) {
+                    version =  parseInt(matched.version, 10);
+                }
+                return {
+                    // 浏览器
+                    browser: matched.browser,
+                    version: version,
     
-    // static browser = {
-    //     get version() {
-    //         const ua = navigator.userAgent.toLowerCase();
-    //         const isSafari = /(webkit)[ \/]([\w.]+).*(version)[ \/]([\w.]+).*(safari)[ \/]([\w.]+)/.test(ua)
-    //             || /(version)(applewebkit)[ \/]([\w.]+).*(safari)[ \/]([\w.]+)/.test(ua);
-    //         const match = /(chrome)[ \/]([\w.]+)/.exec(ua) || '';
-    //         const matched = {
-    //             browser: match[5] || match[3] || match[1] || '',
-    //             version: match[4] || match[2] || '0',
-    //         };
-    //         let version = 0;
-    //         if (matched.browser) {
-    //             version =  parseInt(matched.version, 10);
-    //         }
-    //         return {
-    //             // 浏览器
-    //             browser: matched.browser,
-    //             version: version,
-
-    //             // 系统
-    //             linux: /Linux/i.test(ua),
-
-    //             // 内核
-    //             webKit: /AppleWebKit/i.test(ua),
-    //             gecko: /Gecko/i.test(ua) && !/KHTML/i.test(ua),
-    //             trident: /Trident/i.test(ua),
-    //             presto: /Presto/i.test(ua),
-
-    //             // 手机
-    //             mobile: /AppleWebKit.*Mobile.*/i.test(ua),
-    //             iOS: /Mac OS X[\s_\-\/](\d+[.\-_]\d+[.\-_]?\d*)/i.test(ua),
-    //             iPhone: /iPhone/i.test(ua),
-    //             iPad: /iPad/i.test(ua),
-    //             webApp: !/Safari/i.test(ua),
-    //             android: /Android/i.test(ua),
-    //             windowsPhone: /Windows Phone/i.test(ua),
-    //             microMessenger: /MicroMessenger/i.test(ua),
-
-    //             // 桌面
-    //             msie: /msie [\w.]+/i.test(ua),
-    //             edge: /edge/i.test(ua),
-    //             edgeBuild16299: /(\s|^)edge\/16.16299(\s|$)/i.test(ua),
-    //             safari: isSafari,
-    //             safariSupportMSE: isSafari && (/Version\/1\d/i).test(ua),
-    //         };
-    //     },
-    //     get isMobile() {
-    //         return this.version.mobile || this.version.iOS || this.version.android || this.version.windowsPhone;
-    //     },
-    // };
+                    // 系统
+                    linux: /Linux/i.test(ua),
+    
+                    // 内核
+                    webKit: /AppleWebKit/i.test(ua),
+                    gecko: /Gecko/i.test(ua) && !/KHTML/i.test(ua),
+                    trident: /Trident/i.test(ua),
+                    presto: /Presto/i.test(ua),
+    
+                    // 手机
+                    mobile: /AppleWebKit.*Mobile.*/i.test(ua),
+                    iOS: /Mac OS X[\s_\-\/](\d+[.\-_]\d+[.\-_]?\d*)/i.test(ua),
+                    iPhone: /iPhone/i.test(ua),
+                    iPad: /iPad/i.test(ua),
+                    webApp: !/Safari/i.test(ua),
+                    android: /Android/i.test(ua),
+                    windowsPhone: /Windows Phone/i.test(ua),
+                    microMessenger: /MicroMessenger/i.test(ua),
+    
+                    // 桌面
+                    msie: /msie [\w.]+/i.test(ua),
+                    edge: /edge/i.test(ua),
+                    edgeBuild16299: /(\s|^)edge\/16.16299(\s|$)/i.test(ua),
+                    safari: isSafari,
+                    safariSupportMSE: isSafari && (/Version\/1\d/i).test(ua),
+                };
+            },
+            get isMobile() {
+                return this.version.mobile || this.version.iOS || this.version.android || this.version.windowsPhone;
+            },
+        };
+    }
 
     /**
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
@@ -499,12 +500,16 @@ class Utils {
         })();
         const reImport = () => {
             const reader = new FileReader();
-            reader.readAsText(uploader['files'][0]);
+            reader.readAsArrayBuffer(uploader['files'][0]);
             reader.onload = () => {
                 callback(reader);
             };
+            reader.onerror = (e) => {
+                console.log(e);
+            };
         };
-        if (!Utils.browser.version.trident && !Utils.browser.version.edge) {
+        const browser = this.browser();
+        if (!browser.version.trident && !browser.version.edge) {
             uploader.addEventListener('change', () => {
                 reImport();
             });
@@ -579,6 +584,55 @@ class Utils {
 
     static getSessionID() {
         return md5((String(this.getCookie('buvid3') || Math.floor(Math.random() * 100000).toString(16)) + (+new Date())));
+    }
+    
+    static generateUUID() {
+        let d = new Date().getTime();
+        const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+          const r = (d + Math.random() * 16) % 16 | 0;
+          d = Math.floor(d / 16);
+          return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
+        return uuid;
+    }
+
+    static getDecoder() {
+        if (window.TextDecoder) {
+            return new window.TextDecoder();
+        }
+
+        return {
+            decode: buf => decodeURIComponent(window.escape(
+                String.fromCharCode.apply(String, new Uint8Array(buf)))),
+        };
+    }
+
+    static getEncoder() {
+        if (window.TextEncoder) {
+            return new window.TextEncoder();
+        }
+
+        return {
+            encode: (str) => {
+                const buf = new ArrayBuffer(str.length), // 每个字符占用2个字节
+                    bufView = new Uint8Array(buf);
+
+                for (let i = 0, strLen = str.length; i < strLen; i++) {
+                    bufView[i] = str.charCodeAt(i);
+                }
+                return buf;
+            },
+        };
+    }
+    static mergeArrayBuffer(arrayBuffer1, arrayBuffer2) {
+        const unit8Array1 = new Uint8Array(arrayBuffer1),
+            unit8Array2 = new Uint8Array(arrayBuffer2),
+            res = new Uint8Array(unit8Array1.byteLength + unit8Array2.byteLength);
+
+        res.set(unit8Array1, 0);
+        res.set(unit8Array2, unit8Array1.byteLength);
+        console.log('res.buffer', res.buffer);
+        return res.buffer;
     }
 }
 
