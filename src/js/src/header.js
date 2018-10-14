@@ -1,6 +1,5 @@
 import Utils from '../utils/utils.js';
 import UI from "../../../ui/src/js";
-import pako from "pako";
 
 
 class Header {
@@ -8,6 +7,7 @@ class Header {
         this.nav = nav;
         this.prefix = this.nav.prefix;
         this.container = this.nav.template.header;
+        this.local = this.nav.infoSet.local;
         this.init();
     }
 
@@ -16,9 +16,9 @@ class Header {
         this.container.append(this.TPL());
 
         this.elements = {
-            addFile: this.container.find(`.${prefix}-add-file`),
+            addFile: this.container.find(`.${prefix}-add-file .drop`),
             addinfo: this.container.find(`.${prefix}-add-info`),
-            typeInfo: new UI.Select($(`.${prefix}-type`)[0], this.nav.typeList),
+            typeInfo: new UI.Select($(`.${prefix}-type`)[0], this.local.typeList),
             nameInfo: new UI.Input($(`.${prefix}-name-input`)[0]),
             srcInfo: new UI.Input($(`.${prefix}-src-input`)[0]),
             submit: new UI.Button($(`.${prefix}-add-btn`)[0], {
@@ -30,31 +30,50 @@ class Header {
         }
 
         this.elements.typeInfo.on('input', (e) => {
-            this.nav.typeList.items.push(e);
-            this.nav.typeList.value = e.id;
-            this.nav.srcList[e.id] = [];
+            this.local.typeList.items.push(e);
+            this.local.typeList.value = e.id;
+            this.local.srcList[e.id] = [];
             this.nav.infoSet.setLocalSettings();
-            this.elements.typeInfo.reload(this.nav.typeList);
+            this.elements.typeInfo.reload(this.local.typeList);
         });
-
+        
         this.elements.submit.on('click', (e) => {
             this.upLoadSrc();
         });
-
+        
         this.elements.download.on('click', (e) => {
-            this.downloadXML();
             this.downloadJSON();
         });
-        this.elements.addFile.on('click', (e) => {
-            this.upload();
+        this.elements.download.on('contextmenu', (e) => {
+            e.preventDefault();
+            this.downloadXML();
+            return false;
         });
-        
+        const browser = Utils.browser();
+        if (!browser.version.trident && !browser.version.edge) {
+            this.elements.addFile.on('change', () => {
+                this.fileChange();
+            });
+        } else {
+            // IE系的浏览器因为浏览器本身的bug无法用click()触发input元素的change事件,这里做下处理.
+            window['setTimeout'](() => {
+                if (this.elements.addFile.getAttribute('value').length > 0) {
+                    this.fileChange();
+                }
+            }, 0);    
+        }
     }
-
+    fileChange() {
+        this.update((result) => {
+            this.nav.infoSet.setLocalSettings(result);
+            this.elements.typeInfo.reload(this.local.typeList);
+            this.nav.list.load();
+        });
+    }
     TPL() {
         const prefix = this.prefix;
         return `
-            <div class="${prefix}-add-file">点击或拖拽上传文件（xml, json）</div>
+            <div class="${prefix}-add-file">点击或拖拽上传文件（xml, json）<input type="file" class="drop"></div>
             <div class="${prefix}-add-info">
                 <div class="${prefix}-type"></div>
                 <div class="${prefix}-name">name: </div>
@@ -67,17 +86,17 @@ class Header {
             `;
     }
     upLoadSrc() {
-        const typeId = this.nav.typeList.value;
-        const name = $.trim(this.nameInfo.value());
-        const src = $.trim(this.srcInfo.value());
+        const typeId = this.local.typeList.value;
+        const name = $.trim(this.elements.nameInfo.value());
+        const src = $.trim(this.elements.srcInfo.value());
         if (name && src) {
             this.nav.infoSet.setSrcInfo({
                 typeId,
                 name,
                 src
             }, () => {
-                this.nameInfo.value('');
-                this.srcInfo.value('');
+                this.elements.nameInfo.value('');
+                this.elements.srcInfo.value('');
                 this.nav.list.load();
             });
         } else {
@@ -86,17 +105,17 @@ class Header {
     }
     downloadXML() {
         try {
-            const local = this.nav.infoSet.local;
+            const local = this.local;
             const items = local.typeList.items;
             const src = local.srcList;
             let reXml = '';
             reXml += '<type value="' + local.typeList.value + '" height="' + local.typeList.maxHeight + '"></type>\n';
             items.forEach(ele => {
-                reXml += '<item id="' + ele.id + '">' + ele.name + '</item>\n'
+                reXml += '<item id="' + ele.id + '" name="' + ele.name + '"></item>\n'
             });
             items.forEach(ele => {
                 src[ele.id].forEach(item => {
-                    reXml += '<list id="' + ele.id + '" name="' + item.name + '">' + item.src + '</list>\n'
+                    reXml += '<list id="' + ele.id + '" name="' + item.name + '" src="' + item.src + '"></list>\n'
                 })
             });
             Utils.download({
@@ -119,88 +138,72 @@ class Header {
             console.warn(error);
         }
     }
-    upload() {
-        Utils.upload((reader) => {
-            console.log(reader);
-            const arrayBuffer = reader.result;
-            const dataView = new DataView(arrayBuffer);
-            const len = dataView.byteLength;
-            if (!this.decoder) {
-                this.decoder = Utils.getDecoder();
-            }
-            const tag = this.decoder.decode(arrayBuffer.slice(0, 4));
-            const ver = dataView.getInt32(4);
-            const res = dataView.getInt32(8);
-            const num = dataView.getInt32(12);
-
-            const data = {};
-            data.list = [];
-            data.zip = [];
-            data.pageList = [];
-            let offset = 16,
-                packetLen = 4;
-            for (let i = 0; i < num; i++) {
-                const time = dataView.getInt32(offset + 4);
-                const off = dataView.getInt32(offset + 12);
-                offset += packetLen * 4;
-                data.list.push({
-                    time,
-                    off
-                })
-            }
-            console.time('object');
-            data.list.reduce((last, now) => {
-                if (last !== 0) {
-                    const input = arrayBuffer.slice(last.off, now.off);
-                    data.zip.push({
-                        zip: pako.inflate(input).buffer,
-                    })
+    update(cb) {
+        const file = this.elements.addFile[0]['files'][0];
+        const type = file.type;
+        const reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = () => {
+            if (/\w+\/json/.test(type)) {
+                try {
+                    typeof cb === 'function' && cb(JSON.parse(reader.result));
+                } catch (error) {
+                    console.log(error);
                 }
-                return now;
-            }, 0)
-            console.timeEnd('object');
-            data.zip.length = 1;
-            let width, height, time, page, l, dw, pages = [];
-            console.time('object1');
-            data.zip.forEach(item => {
-                dw = new DataView(item.zip);
-                for (let i = 0, len = dw.byteLength; i < len;) {
-                    width = width || dw.getInt16(i);
-                    height = height || dw.getInt16(i + 2);
-                    l = l || (width * height) / 8;
-                    time = dw.getInt32(i + 8);
-                    page = item.zip.slice(i + 12, i + 12 + l);
-                    page = 'data:image/png;base64,' + btoa(String.fromCharCode(...new Uint8Array(page)));
-                    i = i + 12 +l;
-                    pages.push({
-                        width,
-                        height,
-                        time,
-                        page,
-                    });
-                }
+            } else if (/\w+\/xml/.test(type)) {
+                typeof cb === 'function' && cb(this.parseXML(reader.result));
+            }
+        };
+        reader.onerror = (e) => {
+            console.log(e);
+        };
+    }
 
-                data.pageList.push(pages)
+    parseXML(result) {
+        const json = {
+            srcList: {},
+        };
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(result,"text/xml");
+        var type = xmlDoc.getElementsByTagName('type')[0];
+        const items = xmlDoc.getElementsByTagName('item');
+        const list = xmlDoc.getElementsByTagName('list');
+        json.typeList = {
+            value: this.getAttributeValue(type, 'value'),
+            maxHeight: this.getAttributeValue(type, 'height'),
+            items: [],
+        };
+        for (let i = 0, len = items.length; i < len; i++) {
+            const ele = items[i];
+            json.typeList.items.push({
+                id: this.getAttributeValue(ele, 'id'),
+                name: this.getAttributeValue(ele, 'name'),
             })
-            console.timeEnd('object1');
-            this.container.append(`<img src="${data.pageList[0][0].page}">`);
-            // for (; offset < num ; offset += packetLen) {
-            //     packetLen = dataView.getInt32(offset);
-            //     headerLen = dataView.getInt16(offset + STATE.WS_HEADER_OFFSET);
-            //     // body = JSON.parse(this.decoder.decode(arrayBuffer.slice(offset + headerLen,
-            //     //     offset + packetLen)));
-            //     try {
-            //         body = JSON.parse(this.decoder.decode(arrayBuffer.slice(offset + headerLen, offset + packetLen)));
-            //         data.body = body;
-            //     } catch (e) {
-            //         body = this.decoder.decode(arrayBuffer.slice(offset + headerLen, offset + packetLen));
-            //         console.error('decode body error:', new Uint8Array(arrayBuffer), data);
-            //     }
-            // }
+        }
+        for (let i = 0, len = list.length; i < len; i++) {
+            const ele = list[i];
+            const id = this.getAttributeValue(ele, 'id');
+            if (typeof id !== 'underfined') {
+                const it = {
+                    src: this.getAttributeValue(ele, 'src'),
+                    name: this.getAttributeValue(ele, 'name'),
+                };
+                if (json.srcList[id]) {
+                    json.srcList[id].push(it)
+                } else {
+                    json.srcList[id] = [it]
+                }
+            }
+        }
+        return json;
+    }
 
-
-            // console.log(tag, ver, res, num);
-        })
+    getAttributeValue (xmlNode, attrName){
+        if(!xmlNode) return "" ;
+        if(!xmlNode.attributes) return "" ;
+        if(xmlNode.attributes[attrName] !== null) return xmlNode.attributes[attrName].value ;
+        if(xmlNode.attributes.getNamedItem(attrName) !== null) return xmlNode.attributes.getNamedItem(attrName).value ;
+        return "" ;
     }
 }
 

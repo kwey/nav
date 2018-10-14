@@ -7,6 +7,7 @@ class List {
         this.nav = nav;
         this.prefix = this.nav.prefix;
         this.container = this.nav.template.list;
+        this.local = this.nav.infoSet.local;
         this.init();
     }
 
@@ -19,11 +20,12 @@ class List {
 
     load() {
         this.container.html('');
-        const types = this.nav.typeList.items;
+        this.index = 0;
+        const types = this.local.typeList.items;
         const len = this.color.length;
         types.forEach((item) => {
             const co = this.color[this.index % len];
-            const list = this.nav.srcList[item.id];
+            const list = this.local.srcList[item.id];
             list.length > 0 && this.container.append(new UI.Link($(`<div class="${this.prefix}-list-item"></div>`)[0], {
                 type: item.name,
                 list: list,

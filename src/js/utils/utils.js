@@ -500,9 +500,9 @@ class Utils {
         })();
         const reImport = () => {
             const reader = new FileReader();
-            reader.readAsArrayBuffer(uploader['files'][0]);
+            reader.readAsText(uploader['files'][0]);
             reader.onload = () => {
-                callback(reader);
+                callback(reader, uploader['files'][0].type);
             };
             reader.onerror = (e) => {
                 console.log(e);

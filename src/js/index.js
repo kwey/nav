@@ -12,8 +12,6 @@ class Nav {
         this.config = config;
         this.prefix =  'nav-x';
         this.container = config.container || document.createElement('div');
-        this.typeList = [];
-        this.srcList = {};
         this.init();
         return this;
     }
