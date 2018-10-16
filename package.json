@@ -24,7 +24,10 @@
       "env"
     ]
   },
-  "dependencies": {},
+  "dependencies": {
+    "bitview": "^0.1.5",
+    "imagetracerjs": "^1.2.4"
+  },
   "devDependencies": {
     "art-template": "^4.13.0",
     "art-template-loader": "^1.4.3",

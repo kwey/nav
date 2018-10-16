@@ -1,6 +1,9 @@
 import Utils from '../utils/utils.js';
 import UI from "../../../ui/src/js";
 import pako from "pako";
+// import ImageTracer from "imagetracerjs";
+import BitView from "bitview";
+
 
 
 class Header {
@@ -164,13 +167,14 @@ class Header {
             console.time('object1');
             data.zip.forEach(item => {
                 dw = new DataView(item.zip);
-                for (let i = 0, len = dw.byteLength; i < len;) {
+                for (let i = 0, len = dw.byteLength / 1; i < len;) {
                     width = width || dw.getInt16(i);
                     height = height || dw.getInt16(i + 2);
                     l = l || (width * height) / 8;
                     time = dw.getInt32(i + 8);
                     page = item.zip.slice(i + 12, i + 12 + l);
-                    page = 'data:image/png;base64,' + btoa(String.fromCharCode(...new Uint8Array(page)));
+                    page = this.parseImage(width, height, page)
+                    // page = 'data:image/png;base64,' + btoa(String.fromCharCode(...new Uint8Array(page)));
                     i = i + 12 +l;
                     pages.push({
                         width,
@@ -179,28 +183,116 @@ class Header {
                         page,
                     });
                 }
-
-                data.pageList.push(pages)
+                
             })
-            console.timeEnd('object1');
-            this.container.append(`<img src="${data.pageList[0][0].page}">`);
-            // for (; offset < num ; offset += packetLen) {
-            //     packetLen = dataView.getInt32(offset);
-            //     headerLen = dataView.getInt16(offset + STATE.WS_HEADER_OFFSET);
-            //     // body = JSON.parse(this.decoder.decode(arrayBuffer.slice(offset + headerLen,
-            //     //     offset + packetLen)));
-            //     try {
-            //         body = JSON.parse(this.decoder.decode(arrayBuffer.slice(offset + headerLen, offset + packetLen)));
-            //         data.body = body;
-            //     } catch (e) {
-            //         body = this.decoder.decode(arrayBuffer.slice(offset + headerLen, offset + packetLen));
-            //         console.error('decode body error:', new Uint8Array(arrayBuffer), data);
+            // data.zip.forEach(item => {
+            //     dw = new DataView(item.zip);
+            //     for (let i = 0, len = dw.byteLength; i < len;) {
+            //         width = width || dw.getInt16(i);
+            //         height = height || dw.getInt16(i + 2);
+            //         l = l || (width * height) / 8;
+            //         time = dw.getInt32(i + 8);
+            //         page = item.zip.slice(i + 12, i + 12 + l);
+            //         page = 'data:image/png;base64,' + btoa(String.fromCharCode(...new Uint8Array(page)));
+            //         i = i + 12 +l;
+            //         pages.push({
+            //             width,
+            //             height,
+            //             time,
+            //             page,
+            //         });
             //     }
-            // }
 
+            //     data.pageList.push(pages)
+            // })
+            console.timeEnd('object1');
 
             // console.log(tag, ver, res, num);
         })
+    }
+    parseImage(width, height, buffer) {
+        console.time('imagedataToSVG');
+        const image0Dataview = new DataView(buffer);
+        // const width = image0Dataview.getInt16(0);
+        // const height = image0Dataview.getInt16(2);
+        // const pts = image0Dataview.getInt32(8);
+        // const base64bmp = buffer.slice(12, width * height / 8 + 12)
+        const base64bmp = buffer
+
+        // console.log(newImageData);
+
+        const bitArray = new Uint8ClampedArray(width * height * 4);
+        let bitArrayIndex = 0;
+        for (var i = 0; i < image0Dataview.byteLength; i ++) {
+            let t = image0Dataview.getInt8(i);
+            let tempArrayBuffer = base64bmp.slice(i, i + 1);
+            // let tempDataView = new DataView(tempArrayBuffer);
+            // let tempUint8array = new Uint8Array(tempArrayBuffer)
+
+            if (t !== 0) {
+                const aasd = t;
+            }
+
+            let bitview = new BitView(tempArrayBuffer);
+            for (let j = 0; j < 8; j ++) {
+                for (let k = 0; k < 4; k ++) {
+                    bitArray[bitArrayIndex] = bitview.get(j) === 0 ? 0 : 255;
+                    bitArrayIndex ++;
+                }
+                
+            }
+        }
+
+        // console.log(bitArray);
+
+        
+        // const svgstring = ImageTracer.imagedataToSVG({
+        //     width: width,
+        //     height: height,
+        //     data: bitArray
+        // }, 'artistic2');
+
+        const data = new ImageData(bitArray, width, height)
+        var canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+
+        // Copy the image contents to the canvas
+        var ctx = canvas.getContext("2d");
+        ctx.putImageData(data, 0, 0);
+
+        // Get the data-URL formatted image
+        var dataURL = canvas.toDataURL("image/png");
+        // artistic2 
+        console.timeEnd('imagedataToSVG');
+
+
+        // console.log(svgstring, new Uint8ClampedArray(bitArray));
+
+        // document.body.innerHTML += svgstring.replace('opacity=\"0\"', 'opacity="1"');
+
+
+
+         var image = new Image();
+
+        //  var newStr = svgstring.replace('opacity=\"0\"', 'opacity="1"');
+        //  var base64 = 'data:image/svg+xml;base64,' + window.btoa(newStr);
+        //   image.src = base64;
+        //   document.body.appendChild(image);
+        //   return base64;
+
+          image.src = dataURL;
+          document.body.appendChild(image);
+          return dataURL;
+    }
+    imagedata_to_image(imagedata) {
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        canvas.width = imagedata.width;
+        canvas.height = imagedata.height;
+        ctx.putImageData(imagedata, 0, 0);
+    
+        return canvas.toDataURL('image/png');
     }
 }
 
