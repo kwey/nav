@@ -1,6 +1,5 @@
 import Utils from '../utils/utils.js';
 
-
 class InfoSet {
     constructor(nav) {
         this.nav = nav;
@@ -19,10 +18,10 @@ class InfoSet {
                 typeList: {
                     value: '0',
                     maxHeight: 100,
-                    items: []
+                    items: [],
                 },
                 srcList: {},
-            }
+            };
             this.setLocalSettings();
         }
     }
@@ -54,19 +53,16 @@ class InfoSet {
         const hasType = list.some(ele => {
             return ele.id === typeId;
         });
-
+        this.local.srcList[typeId] = this.local.srcList[typeId] || [];
+        const l = this.local.srcList[typeId];
         if (hasType) {
-            const l = this.local.srcList[typeId];
-            const hasSrc = l.some(ele => {
+            const hasSrc = l && l.some(ele => {
                 return ele.name === name && ele.src === src;
             });
             if (hasSrc) {
                 return true;
             } else {
-                this.local.srcList[typeId].push({
-                    name,
-                    src,
-                });
+                l.push({ name, src });
                 return false;
             }
         } else {
@@ -74,10 +70,7 @@ class InfoSet {
                 name: typeId,
                 id: list.lenght,
             });
-            this.local.srcList[typeId] = [{
-                name,
-                src,
-            }]
+            l.push({ name, src });
             return false;
         }
     }

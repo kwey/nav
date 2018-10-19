@@ -1,5 +1,5 @@
 import Utils from '../utils/utils.js';
-import UI from "../../../ui/src/js";
+import UI from '../../../ui/src/js';
 
 
 class Header {
@@ -27,7 +27,7 @@ class Header {
             download: new UI.Button($(`.${prefix}-download-btn`)[0], {
                 name: '下载',
             }),
-        }
+        };
 
         this.elements.typeInfo.on('input', (e) => {
             this.local.typeList.items.push(e);
@@ -93,7 +93,7 @@ class Header {
             this.nav.infoSet.setSrcInfo({
                 typeId,
                 name,
-                src
+                src,
             }, () => {
                 this.elements.nameInfo.value('');
                 this.elements.srcInfo.value('');
@@ -111,18 +111,18 @@ class Header {
             let reXml = '';
             reXml += '<type value="' + local.typeList.value + '" height="' + local.typeList.maxHeight + '"></type>\n';
             items.forEach(ele => {
-                reXml += '<item id="' + ele.id + '" name="' + ele.name + '"></item>\n'
+                reXml += '<item id="' + ele.id + '" name="' + ele.name + '"></item>\n';
             });
             items.forEach(ele => {
-                src[ele.id].forEach(item => {
-                    reXml += '<list id="' + ele.id + '" name="' + item.name + '" src="' + item.src + '"></list>\n'
-                })
+                src[ele.id] && src[ele.id].forEach(item => {
+                    reXml += '<list id="' + ele.id + '" name="' + item.name + '" src="' + encodeURIComponent(item.src) + '"></list>\n';
+                });
             });
             Utils.download({
                 text: `<filters>\n${reXml}</filters>`,
                 type: 'text/xml;charset=utf-8',
-                fileName: 'nav-x.xml'
-            })
+                fileName: 'nav-x.xml',
+            });
         } catch (error) {
             console.warn(error);
         }
@@ -132,8 +132,8 @@ class Header {
             Utils.download({
                 text: JSON.stringify(this.nav.infoSet.local, null, '\t'),
                 type: 'text/json;charset=utf-8',
-                fileName: 'nav-x.json'
-            })
+                fileName: 'nav-x.json',
+            });
         } catch (error) {
             console.warn(error);
         }
@@ -164,8 +164,8 @@ class Header {
             srcList: {},
         };
         const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(result,"text/xml");
-        var type = xmlDoc.getElementsByTagName('type')[0];
+        const xmlDoc = parser.parseFromString(result, 'text/xml');
+        const type = xmlDoc.getElementsByTagName('type')[0];
         const items = xmlDoc.getElementsByTagName('item');
         const list = xmlDoc.getElementsByTagName('list');
         json.typeList = {
@@ -178,32 +178,32 @@ class Header {
             json.typeList.items.push({
                 id: this.getAttributeValue(ele, 'id'),
                 name: this.getAttributeValue(ele, 'name'),
-            })
+            });
         }
         for (let i = 0, len = list.length; i < len; i++) {
             const ele = list[i];
             const id = this.getAttributeValue(ele, 'id');
-            if (typeof id !== 'underfined') {
+            if (typeof id !== 'undefined') {
                 const it = {
-                    src: this.getAttributeValue(ele, 'src'),
+                    src: decodeURIComponent(this.getAttributeValue(ele, 'src')),
                     name: this.getAttributeValue(ele, 'name'),
                 };
                 if (json.srcList[id]) {
-                    json.srcList[id].push(it)
+                    json.srcList[id].push(it);
                 } else {
-                    json.srcList[id] = [it]
+                    json.srcList[id] = [it];
                 }
             }
         }
         return json;
     }
 
-    getAttributeValue (xmlNode, attrName){
-        if(!xmlNode) return "" ;
-        if(!xmlNode.attributes) return "" ;
-        if(xmlNode.attributes[attrName] !== null) return xmlNode.attributes[attrName].value ;
-        if(xmlNode.attributes.getNamedItem(attrName) !== null) return xmlNode.attributes.getNamedItem(attrName).value ;
-        return "" ;
+    getAttributeValue (xmlNode, attrName) {
+        if(!xmlNode) return '';
+        if(!xmlNode.attributes) return '';
+        if(xmlNode.attributes[attrName] !== null) return xmlNode.attributes[attrName].value;
+        if(xmlNode.attributes.getNamedItem(attrName) !== null) return xmlNode.attributes.getNamedItem(attrName).value;
+        return '';
     }
 }
 

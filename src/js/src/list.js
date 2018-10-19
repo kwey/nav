@@ -1,6 +1,6 @@
 // import Utils from '../utils';
 
-import UI from "../../../ui/src/js";
+import UI from '../../../ui/src/js';
 
 class List {
     constructor(nav) {
@@ -13,7 +13,7 @@ class List {
 
     init() {
         this.index = 0;
-        this.color = ['#0ff', '#9cf', '#ccf', '#fcf', '#cff', '#3cf', '#ffc']
+        this.color = ['#0ff', '#9cf', '#ccf', '#fcf', '#cff', '#3cf', '#ffc'];
         this.load();
         this.listItem = $(`.${this.prefix}-list-item`);
     }
@@ -26,14 +26,14 @@ class List {
         types.forEach((item) => {
             const co = this.color[this.index % len];
             const list = this.local.srcList[item.id];
-            list.length > 0 && this.container.append(new UI.Link($(`<div class="${this.prefix}-list-item"></div>`)[0], {
+            list && list.length > 0 && this.container.append(new UI.Link($(`<div class="${this.prefix}-list-item"></div>`)[0], {
                 type: item.name,
                 list: list,
                 bg: co,
                 border: co,
             }).container);
             this.index ++;
-        })
+        });
     }
 
     reload() {

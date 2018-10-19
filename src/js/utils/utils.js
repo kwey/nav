@@ -1,4 +1,4 @@
-
+// import md5 from 'md5';
 
 class Utils {
     static browser() {
@@ -76,43 +76,43 @@ class Utils {
         return to;
     }
     static extend() {
-        var options, name, src, copy, copyIsArray, clone,
-    　　　　target = arguments[0] || {},
-    　　　　i = 1,
-    　　　　length = arguments.length,
-    　　　　deep = false;
-        if (typeof target === "boolean") {
+        let options, name, src, copy, copyIsArray, clone,
+            target = arguments[0] || {},
+            i = 1,
+            length = arguments.length,
+            deep = false;
+        if (typeof target === 'boolean') {
             deep = target;
             target = arguments[1] || {};
             i = 2;
         }
-        if (typeof target !== "object" && typeof target !== "function") {
+        if (typeof target !== 'object' && typeof target !== 'function') {
             target = {};
         }
         if (length === i) {
             target = this;
             --i;
         }
-        if ( (options = arguments[i]) != null ) {
+        if ((options = arguments[i]) != null) {
             for (name in options) {
                 src = target[name];
                 copy = options[name];
                 if (target === copy) {
                     continue;
                 }
-                if (deep && copy && typeof target === "object") {
+                if (deep && copy && typeof target === 'object') {
                     if (Array.isArray(copy)) {
                         clone = src && Array.isArray(src) ? src : [];
                     } else {
-                        clone = src && typeof target !== "object" ? src : {};
+                        clone = src && typeof target !== 'object' ? src : {};
                     }
                     target[name] = this.extend(deep, clone, copy);
                 } else if (copy !== undefined) {
                     target[name] = copy;
                 }
             }
-    　　}
-    　　return target;
+        }
+        return target;
         // if (obj === null || (typeof obj !== 'object')) {
         //     return obj;
         // }
@@ -169,7 +169,7 @@ class Utils {
         document.cookie = `${encodeName}=${encodeValue}; expires=${date.toU()}; path=/; domain=.bilibili.com`;
     }
 
-    static getSearchParam(name, url){
+    static getSearchParam(name, url) {
         let searchIndex;
         let hashIndex;
         let searchString;
@@ -492,7 +492,7 @@ class Utils {
     }
 
     static upload(callback) {
-        // const uploader: any = $('<input type="file">');
+        // const uploader: any = $('<input type='file'>');
         const uploader = document.createElement('input');
         uploader.setAttribute('type', 'file');
         (() => {
@@ -582,16 +582,16 @@ class Utils {
         return (parseInt(color, 16) + 0x000000) & 0xffffff;
     }
 
-    static getSessionID() {
-        return md5((String(this.getCookie('buvid3') || Math.floor(Math.random() * 100000).toString(16)) + (+new Date())));
-    }
+    // static getSessionID() {
+    //     return md5((String(this.getCookie('buvid3') || Math.floor(Math.random() * 100000).toString(16)) + (+new Date())));
+    // }
     
     static generateUUID() {
         let d = new Date().getTime();
         const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-          const r = (d + Math.random() * 16) % 16 | 0;
-          d = Math.floor(d / 16);
-          return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+            const r = (d + Math.random() * 16) % 16 | 0;
+            d = Math.floor(d / 16);
+            return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
         });
         return uuid;
     }

@@ -1,6 +1,6 @@
 // import Utils from '../utils';
 
-import UI from "../../../ui/src/js";
+import UI from '../../../ui/src/js';
 
 class List {
     constructor(nav) {
@@ -18,8 +18,8 @@ class List {
     addList(list) {
         if (Array.isArray(list)) {
             list.forEach((item) => {
-                $(`.${this.prefix}-list-area`).append(new UI.Link(null, item).container)
-            })
+                $(`.${this.prefix}-list-area`).append(new UI.Link(null, item).container);
+            });
         }
     }
     TPL() {
