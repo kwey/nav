@@ -1,4 +1,4 @@
-import Utils from '../utils/utils.js';
+import Utils from '../utils/utils';
 import UI from '../../../ui/src/js';
 
 
@@ -12,7 +12,7 @@ class Header {
     }
 
     init() {
-        const prefix = this.prefix;
+        const { prefix } = this;
         this.container.append(this.TPL());
 
         this.elements = {
@@ -36,12 +36,12 @@ class Header {
             this.nav.infoSet.setLocalSettings();
             this.elements.typeInfo.reload(this.local.typeList);
         });
-        
-        this.elements.submit.on('click', (e) => {
+
+        this.elements.submit.on('click', () => {
             this.upLoadSrc();
         });
-        
-        this.elements.download.on('click', (e) => {
+
+        this.elements.download.on('click', () => {
             this.downloadJSON();
         });
         this.elements.download.on('contextmenu', (e) => {
@@ -56,13 +56,14 @@ class Header {
             });
         } else {
             // IE系的浏览器因为浏览器本身的bug无法用click()触发input元素的change事件,这里做下处理.
-            window['setTimeout'](() => {
+            setTimeout(() => {
                 if (this.elements.addFile.getAttribute('value').length > 0) {
                     this.fileChange();
                 }
-            }, 0);    
+            }, 0);
         }
     }
+
     fileChange() {
         this.update((result) => {
             this.nav.infoSet.setLocalSettings(result);
@@ -70,8 +71,9 @@ class Header {
             this.nav.list.load();
         });
     }
+
     TPL() {
-        const prefix = this.prefix;
+        const { prefix } = this;
         return `
             <div class="${prefix}-add-file">点击或拖拽上传文件（xml, json）<input type="file" class="drop"></div>
             <div class="${prefix}-add-info">
@@ -85,6 +87,7 @@ class Header {
             </div>
             `;
     }
+
     upLoadSrc() {
         const typeId = this.local.typeList.value;
         const name = $.trim(this.elements.nameInfo.value());
@@ -103,20 +106,23 @@ class Header {
             console.log(123123);
         }
     }
+
     downloadXML() {
         try {
-            const local = this.local;
-            const items = local.typeList.items;
+            const { local } = this;
+            const { items } = local.typeList;
             const src = local.srcList;
             let reXml = '';
-            reXml += '<type value="' + local.typeList.value + '" height="' + local.typeList.maxHeight + '"></type>\n';
-            items.forEach(ele => {
-                reXml += '<item id="' + ele.id + '" name="' + ele.name + '"></item>\n';
+            reXml += `<type value="${local.typeList.value}" height="${local.typeList.maxHeight}"></type>\n`;
+            items.forEach((ele) => {
+                reXml += `<item id="${ele.id}" name="${ele.name}"></item>\n`;
             });
-            items.forEach(ele => {
-                src[ele.id] && src[ele.id].forEach(item => {
-                    reXml += '<list id="' + ele.id + '" name="' + item.name + '" src="' + encodeURIComponent(item.src) + '"></list>\n';
-                });
+            items.forEach((ele) => {
+                if (src[ele.id]) {
+                    src[ele.id].forEach((item) => {
+                        reXml += `<list id="${ele.id}" name="${item.name}" src="${encodeURIComponent(item.src)}"></list>\n`;
+                    });
+                }
             });
             Utils.download({
                 text: `<filters>\n${reXml}</filters>`,
@@ -127,6 +133,7 @@ class Header {
             console.warn(error);
         }
     }
+
     downloadJSON() {
         try {
             Utils.download({
@@ -138,9 +145,10 @@ class Header {
             console.warn(error);
         }
     }
+
     update(cb) {
-        const file = this.elements.addFile[0]['files'][0];
-        const type = file.type;
+        const file = this.elements.addFile[0].files[0];
+        const { type } = file;
         const reader = new FileReader();
         reader.readAsText(file);
         reader.onload = () => {
@@ -173,14 +181,14 @@ class Header {
             maxHeight: this.getAttributeValue(type, 'height'),
             items: [],
         };
-        for (let i = 0, len = items.length; i < len; i++) {
+        for (let i = 0, len = items.length; i < len; i += 1) {
             const ele = items[i];
             json.typeList.items.push({
                 id: this.getAttributeValue(ele, 'id'),
                 name: this.getAttributeValue(ele, 'name'),
             });
         }
-        for (let i = 0, len = list.length; i < len; i++) {
+        for (let i = 0, len = list.length; i < len; i += 1) {
             const ele = list[i];
             const id = this.getAttributeValue(ele, 'id');
             if (typeof id !== 'undefined') {
@@ -198,11 +206,13 @@ class Header {
         return json;
     }
 
-    getAttributeValue (xmlNode, attrName) {
-        if(!xmlNode) return '';
-        if(!xmlNode.attributes) return '';
-        if(xmlNode.attributes[attrName] !== null) return xmlNode.attributes[attrName].value;
-        if(xmlNode.attributes.getNamedItem(attrName) !== null) return xmlNode.attributes.getNamedItem(attrName).value;
+    static getAttributeValue(xmlNode, attrName) {
+        if (!xmlNode) return '';
+        if (!xmlNode.attributes) return '';
+        if (xmlNode.attributes[attrName] !== null) return xmlNode.attributes[attrName].value;
+        if (xmlNode.attributes.getNamedItem(attrName) !== null) {
+            return xmlNode.attributes.getNamedItem(attrName).value;
+        }
         return '';
     }
 }

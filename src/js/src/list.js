@@ -21,23 +21,23 @@ class List {
     load() {
         this.container.html('');
         this.index = 0;
+        const a = '' + 123;
+        console.log(a);
         const types = this.local.typeList.items;
         const len = this.color.length;
         types.forEach((item) => {
-            const co = this.color[this.index % len];
+            const color = this.color[this.index % len];
             const list = this.local.srcList[item.id];
-            list && list.length > 0 && this.container.append(new UI.Link($(`<div class="${this.prefix}-list-item"></div>`)[0], {
-                type: item.name,
-                list: list,
-                bg: co,
-                border: co,
-            }).container);
-            this.index ++;
+            if (list && list.length > 0) {
+                this.container.append(new UI.Link($(`<div class="${this.prefix}-list-item"></div>`)[0], {
+                    type: item.name,
+                    list,
+                    bg: color,
+                    border: color,
+                }).container);
+            }
+            this.index += 1;
         });
-    }
-
-    reload() {
-
     }
 }
 

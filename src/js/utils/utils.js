@@ -20,16 +20,15 @@ class Utils {
                     // 浏览器
                     browser: matched.browser,
                     version: version,
-    
+
                     // 系统
                     linux: /Linux/i.test(ua),
-    
+
                     // 内核
                     webKit: /AppleWebKit/i.test(ua),
                     gecko: /Gecko/i.test(ua) && !/KHTML/i.test(ua),
                     trident: /Trident/i.test(ua),
-                    presto: /Presto/i.test(ua),
-    
+                    presto: /Presto/i.test(ua),    
                     // 手机
                     mobile: /AppleWebKit.*Mobile.*/i.test(ua),
                     iOS: /Mac OS X[\s_\-\/](\d+[.\-_]\d+[.\-_]?\d*)/i.test(ua),
@@ -39,7 +38,7 @@ class Utils {
                     android: /Android/i.test(ua),
                     windowsPhone: /Windows Phone/i.test(ua),
                     microMessenger: /MicroMessenger/i.test(ua),
-    
+
                     // 桌面
                     msie: /msie [\w.]+/i.test(ua),
                     edge: /edge/i.test(ua),
@@ -75,6 +74,7 @@ class Utils {
         }
         return to;
     }
+
     static extend() {
         let options, name, src, copy, copyIsArray, clone,
             target = arguments[0] || {},

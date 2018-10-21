@@ -1,6 +1,6 @@
 
 
-import './../css/index.less';
+import '../css/index.less';
 
 import Template from './src/template';
 import Header from './src/header';
@@ -10,7 +10,7 @@ import InfoSet from './src/info-set';
 class Nav {
     constructor(config) {
         this.config = config;
-        this.prefix =  'nav-x';
+        this.prefix = 'nav-x';
         this.container = config.container || document.createElement('div');
         this.init();
         return this;

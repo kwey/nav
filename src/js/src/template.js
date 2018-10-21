@@ -1,7 +1,5 @@
 // import Utils from '../utils';
 
-
-
 class Template {
     constructor(nav) {
         this.nav = nav;
@@ -10,17 +8,17 @@ class Template {
     }
 
     init() {
-        const prefix = this.prefix;
-        const container = this.nav.container;
+        const { prefix } = this;
+        const { container } = this.nav;
         $(container).html(this.TPL());
 
         this.header = $(`.${prefix}-header`);
-        
+
         this.list = $(`.${prefix}-list`);
     }
 
     TPL() {
-        const prefix = this.prefix;
+        const { prefix } = this;
         return `
             <div class=${prefix}>
                 <div class="${prefix}-header"></div>
