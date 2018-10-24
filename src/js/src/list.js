@@ -21,8 +21,6 @@ class List {
     load() {
         this.container.html('');
         this.index = 0;
-        const a = '' + 123;
-        console.log(a);
         const types = this.local.typeList.items;
         const len = this.color.length;
         types.forEach((item) => {

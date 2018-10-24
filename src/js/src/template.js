@@ -26,7 +26,6 @@ class Template {
             </div>
             `;
     }
-
 }
 
 export default Template;

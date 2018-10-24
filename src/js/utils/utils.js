@@ -14,12 +14,12 @@ class Utils {
                 };
                 let version = 0;
                 if (matched.browser) {
-                    version =  parseInt(matched.version, 10);
+                    version = parseInt(matched.version, 10);
                 }
                 return {
                     // 浏览器
                     browser: matched.browser,
-                    version: version,
+                    version,
 
                     // 系统
                     linux: /Linux/i.test(ua),
@@ -28,7 +28,7 @@ class Utils {
                     webKit: /AppleWebKit/i.test(ua),
                     gecko: /Gecko/i.test(ua) && !/KHTML/i.test(ua),
                     trident: /Trident/i.test(ua),
-                    presto: /Presto/i.test(ua),    
+                    presto: /Presto/i.test(ua),
                     // 手机
                     mobile: /AppleWebKit.*Mobile.*/i.test(ua),
                     iOS: /Mac OS X[\s_\-\/](\d+[.\-_]\d+[.\-_]?\d*)/i.test(ua),
@@ -75,15 +75,18 @@ class Utils {
         return to;
     }
 
-    static extend() {
-        let options, name, src, copy, copyIsArray, clone,
-            target = arguments[0] || {},
-            i = 1,
-            length = arguments.length,
-            deep = false;
+    static extend(...arg) {
+        let name;
+        let src;
+        let copy;
+        let clone;
+        let target = arg[0] || {};
+        let i = 1;
+        const { length } = arg;
+        let deep = false;
         if (typeof target === 'boolean') {
             deep = target;
-            target = arguments[1] || {};
+            target = arg[1] || {};
             i = 2;
         }
         if (typeof target !== 'object' && typeof target !== 'function') {
@@ -91,9 +94,10 @@ class Utils {
         }
         if (length === i) {
             target = this;
-            --i;
+            i -= 1;
         }
-        if ((options = arguments[i]) != null) {
+        const options = arg[i];
+        if (options != null) {
             for (name in options) {
                 src = target[name];
                 copy = options[name];
@@ -133,9 +137,10 @@ class Utils {
         // }
         // return target;
     }
+
     static loadScript(options) {
         const script = document.createElement('script');
-        script.onload = function () {
+        script.onload = () => {
             options.success && options.success();
         };
         script.onerror = () => {
@@ -145,6 +150,7 @@ class Utils {
 
         document.head.appendChild(script);
     }
+
     static getCookie(cookieName) {
         const defaultResult = '';
         if (cookieName == null) {
@@ -186,7 +192,7 @@ class Utils {
         } else {
             searchString = window.location.search;
         }
-        const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+        const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i');
         const r = searchString.substr(1).match(reg);
         if (r != null) {
             try {
@@ -201,9 +207,8 @@ class Utils {
     static getLocalSettings(key) {
         if (window.localStorage && localStorage.getItem) {
             return localStorage.getItem(key);
-        } else {
-            return this.getCookie(key);
         }
+        return this.getCookie(key);
     }
 
     static setLocalSettings(key, val) {
@@ -212,6 +217,7 @@ class Utils {
                 return localStorage.setItem(key, val);
             } catch (e) {
                 console.warn(e);
+                return null;
             }
         } else {
             return this.setCookie(key, val);
@@ -221,9 +227,8 @@ class Utils {
     static getSessionSettings(key) {
         if (window.sessionStorage && sessionStorage.getItem) {
             return sessionStorage.getItem(key);
-        } else {
-            return this.getCookie(key);
         }
+        return this.getCookie(key);
     }
 
     static setSessionSettings(key, val) {
@@ -258,10 +263,10 @@ class Utils {
         }
         let ret;
         sec = Math.floor(sec) >> 0;
-        ret = ('0' + sec % 60).slice(-2);
-        ret = Math.floor(sec / 60) + ':' + ret;
+        ret = (`0${sec % 60}`).slice(-2);
+        ret = `${Math.floor(sec / 60) }:${ret}`;
         if (ret.length < 5) {
-            ret = '0' + ret;
+            ret = `0${ ret}`;
         }
         return ret;
     }
@@ -273,9 +278,8 @@ class Utils {
         const secArr = format.toString().split(':').reverse();
         if (!secArr.length) {
             return 0;
-        } else {
-            return (parseInt(secArr[0], 10) || 0) + (parseInt(secArr[1], 10) || 0) * 60 + (parseInt(secArr[2], 10) || 0) * 3600;
         }
+        return (parseInt(secArr[0], 10) || 0) + (parseInt(secArr[1], 10) || 0) * 60 + (parseInt(secArr[2], 10) || 0) * 3600;
     }
 
     /**
@@ -284,11 +288,11 @@ class Utils {
     static fmTimestamp(seconds) {
         let ret;
         const date = new Date(seconds * 1000);
-        ret = ('0' + date.getSeconds()).slice(-2);
-        ret = ('0' + date.getMinutes() + ':' + ret).slice(-5);
-        ret = ('0' + date.getHours() + ':' + ret).slice(-8);
-        ret = ('0' + date.getDate() + ' ' + ret).slice(-11);
-        ret = ('0' + (date.getMonth() + 1) + '-' + ret).slice(-14);
+        ret = (`0${date.getSeconds()}`).slice(-2);
+        ret = (`0${ date.getMinutes()}:${ret}`).slice(-5);
+        ret = (`0${date.getHours() }:${ret}`).slice(-8);
+        ret = (`0${ date.getDate()} ${ret}`).slice(-11);
+        ret = (`0${date.getMonth() + 1}-${ret}`).slice(-14);
         // ret = date.getFullYear() + '-' + ret;
         return ret;
     }
@@ -297,7 +301,7 @@ class Utils {
      * 数字到颜色
      */
     static colorFromInt(value) {
-        return '#' + ('00000' + value.toString(16)).slice(-6);
+        return `#${(`00000${  value.toString(16)}`).slice(-6)}`;
     }
 
     static timeParser(str) {
@@ -307,11 +311,11 @@ class Utils {
         };
         if (t && t[0]) {
             return getNum(t[1]) * 60 * 60 + getNum(t[2]) * 60 + getNum(t[3]) + getNum(t[4]) / 1000;
-        } else if (parseFloat(str) >= 0) {
+        } if (parseFloat(str) >= 0) {
             return parseFloat(str);
-        } else {
+        } 
             return false;
-        }
+        
     }
 
     static dateParser(date, timeZone) {
@@ -319,10 +323,10 @@ class Utils {
             timeZone = timeZone || 0;
             const [y, m, d] = date.split('-');
             return (+new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10))) * (1 / 1000) - (new Date().getTimezoneOffset() + timeZone * 60) * 60;
-        } else {
-            return false;
         }
+        return false;
     }
+
     static validateBfsUrl(url) {
         // url 是否为 string
         if (!url || typeof url !== 'string') {
@@ -339,9 +343,11 @@ class Utils {
         }
         return true;
     }
+
     static appendQueryString(url, queryString) {
         return queryString && queryString !== '' ? `${url}?${queryString}` : url;
     }
+
     static getQueryString(url) {
         let queryString = '';
         if (url && url.split) {
@@ -349,6 +355,7 @@ class Utils {
         }
         return queryString;
     }
+
     static removeBfsParams(url) {
         let trimmedUrl = url;
         if (url && url.slice && url.indexOf) {
@@ -359,6 +366,7 @@ class Utils {
         }
         return trimmedUrl;
     }
+
     static setUrlExt(url) {
         const ext = Utils.getUrlExt(Utils.removeBfsParams(url));
         let newExt = ext;
@@ -373,14 +381,17 @@ class Utils {
         // url = url.replace(RegExp('\.' + ext + '$'), `.${ext}`)
         return url;
     }
+
     static hasUrlParams(url) {
         return url.indexOf('@') > -1;
     }
+
     static getUrlExt(url) {
         if (url && url.split) {
             return url.split('.').pop().toLowerCase();
         }
     }
+
     static canUseWebP() {
         try {
             const canvas = document.createElement('canvas');
@@ -398,6 +409,7 @@ class Utils {
             return false;
         }
     }
+
     static removeQueryString(url) {
         let trimmedUrl = url;
         if (url && url.slice && url.indexOf) {
@@ -408,14 +420,17 @@ class Utils {
         }
         return trimmedUrl;
     }
+
     static isNumeric(n) {
         return !isNaN(parseFloat(n)) && isFinite(n);
     }
+
     static appendUrlParam(url, param, value) {
         url += url.indexOf('@') === -1 ? '@' : '_';
         url += value + param;
         return url;
     }
+
     static setSize(url, width, height) {
         // 设置宽高
         if (Utils.isNumeric(width) && width > 0) {
@@ -432,6 +447,7 @@ class Utils {
      * @param {number} [height = width]
      * @return {string}
      */
+
     static thumbnail(url, width, height) {
         height = height || width;
         // 暂存 url 中查询参数，拼到 url 最后
@@ -472,22 +488,21 @@ class Utils {
             fileName: 'text.txt',
         }, o);
         const blob = new Blob([obj.text], { type: obj.type });
-        if (window['navigator']['msSaveOrOpenBlob']) {
+        if (window.navigator.msSaveOrOpenBlob) {
             // For IE
-            navigator['msSaveBlob'](blob, obj.fileName);
+            navigator.msSaveBlob(blob, obj.fileName);
         } else {
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
-            link['download'] = obj.fileName;
+            link.download = obj.fileName;
             link.style.display = 'none';
             link.target = '_blank';
             link.click();
-            window['setTimeout'](() => {
+            window.setTimeout(() => {
                 //  Remove unnecessary nodes and recycle the memory of blob
                 link.remove();
                 window.URL.revokeObjectURL(link.href);
             }, 3000);
-
         }
     }
 
@@ -500,9 +515,9 @@ class Utils {
         })();
         const reImport = () => {
             const reader = new FileReader();
-            reader.readAsText(uploader['files'][0]);
+            reader.readAsText(uploader.files[0]);
             reader.onload = () => {
-                callback(reader, uploader['files'][0].type);
+                callback(reader, uploader.files[0].type);
             };
             reader.onerror = (e) => {
                 console.log(e);
@@ -515,11 +530,11 @@ class Utils {
             });
         } else {
             // IE系的浏览器因为浏览器本身的bug无法用click()触发input元素的change事件,这里做下处理.
-            window['setTimeout'](() => {
+            window.setTimeout(() => {
                 if (uploader.getAttribute('value').length > 0) {
                     reImport();
                 }
-            }, 0);    
+            }, 0);
         }
     }
 
@@ -540,12 +555,13 @@ class Utils {
         }
         for (const k in mapping) {
             if (new RegExp(`(${k})`).test(format)) {
-                const n = RegExp.$1.length === 1 ? mapping[k] : ('00' + mapping[k]).substr(mapping[k].toString().length);
+                const n = RegExp.$1.length === 1 ? mapping[k] : (`00${mapping[k]}`).substr(mapping[k].toString().length);
                 format = format.replace(RegExp.$1, n);
             }
         }
         return format;
     }
+
     static show(ele, type = 'block') {
         if (((ele instanceof jQuery) && (ele).length === 1) || (ele) instanceof HTMLElement) {
             if (ele instanceof jQuery) {
@@ -585,7 +601,7 @@ class Utils {
     // static getSessionID() {
     //     return md5((String(this.getCookie('buvid3') || Math.floor(Math.random() * 100000).toString(16)) + (+new Date())));
     // }
-    
+
     static generateUUID() {
         let d = new Date().getTime();
         const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -603,7 +619,8 @@ class Utils {
 
         return {
             decode: buf => decodeURIComponent(window.escape(
-                String.fromCharCode.apply(String, new Uint8Array(buf)))),
+                String.fromCharCode(...new Uint8Array(buf)),
+            )),
         };
     }
 
@@ -614,8 +631,8 @@ class Utils {
 
         return {
             encode: (str) => {
-                const buf = new ArrayBuffer(str.length), // 每个字符占用2个字节
-                    bufView = new Uint8Array(buf);
+                const buf = new ArrayBuffer(str.length); // 每个字符占用2个字节
+                const bufView = new Uint8Array(buf);
 
                 for (let i = 0, strLen = str.length; i < strLen; i++) {
                     bufView[i] = str.charCodeAt(i);
@@ -624,10 +641,11 @@ class Utils {
             },
         };
     }
+
     static mergeArrayBuffer(arrayBuffer1, arrayBuffer2) {
-        const unit8Array1 = new Uint8Array(arrayBuffer1),
-            unit8Array2 = new Uint8Array(arrayBuffer2),
-            res = new Uint8Array(unit8Array1.byteLength + unit8Array2.byteLength);
+        const unit8Array1 = new Uint8Array(arrayBuffer1);
+        const unit8Array2 = new Uint8Array(arrayBuffer2);
+        const res = new Uint8Array(unit8Array1.byteLength + unit8Array2.byteLength);
 
         res.set(unit8Array1, 0);
         res.set(unit8Array2, unit8Array1.byteLength);
