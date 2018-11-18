@@ -1,9 +1,23 @@
-import Utils from '../utils/utils';
-import UI from '../../../ui/src/js';
+import Utils from './utils';
+import { Select, Input, Button } from '../../ui/src/ui';
 
+import Nav from './nav';
+import { LocalInterface } from './info-set';
+import { LinkListInterface } from '../../ui/src/ts/link';
+
+export interface LocalInterface {
+    prefix: string;
+    container: HTMLElement;
+}
 
 class Header {
-    constructor(nav) {
+    prefix: string;
+    nav: Nav;
+    container: JQuery;
+    local: LocalInterface;
+    elements: any;
+
+    constructor(nav: Nav) {
         this.nav = nav;
         this.prefix = this.nav.prefix;
         this.container = this.nav.template.header;
@@ -12,24 +26,24 @@ class Header {
     }
 
     init() {
-        const { prefix } = this;
+        const { prefix } = this;   
         this.container.append(this.TPL());
 
         this.elements = {
             addFile: this.container.find(`.${prefix}-add-file .drop`),
             addinfo: this.container.find(`.${prefix}-add-info`),
-            typeInfo: new UI.Select($(`.${prefix}-type`)[0], this.local.typeList),
-            nameInfo: new UI.Input($(`.${prefix}-name-input`)[0]),
-            srcInfo: new UI.Input($(`.${prefix}-src-input`)[0]),
-            submit: new UI.Button($(`.${prefix}-add-btn`)[0], {
+            typeInfo: new Select($(`.${prefix}-type`)[0], this.local.typeList),
+            nameInfo: new Input($(`.${prefix}-name-input`)[0], {}),
+            srcInfo: new Input($(`.${prefix}-src-input`)[0], {}),
+            submit: new Button($(`.${prefix}-add-btn`)[0], {
                 name: '上传',
             }),
-            download: new UI.Button($(`.${prefix}-download-btn`)[0], {
+            download: new Button($(`.${prefix}-download-btn`)[0], {
                 name: '下载',
             }),
         };
 
-        this.elements.typeInfo.on('input', (e) => {
+        this.elements.typeInfo.on('input', (e: any) => {
             this.local.typeList.items.push(e);
             this.local.typeList.value = e.id;
             this.local.srcList[e.id] = [];
@@ -44,12 +58,12 @@ class Header {
         this.elements.download.on('click', () => {
             this.downloadJSON();
         });
-        this.elements.download.on('contextmenu', (e) => {
+        this.elements.download.on('contextmenu', (e: any) => {
             e.preventDefault();
             this.downloadXML();
             return false;
         });
-        const browser = Utils.browser();
+        const browser = Utils.browser;
         if (!browser.version.trident && !browser.version.edge) {
             this.elements.addFile.on('change', () => {
                 this.fileChange();
@@ -65,7 +79,7 @@ class Header {
     }
 
     fileChange() {
-        this.update((result) => {
+        this.update((result: LocalInterface) => {
             this.nav.infoSet.setLocalSettings(result);
             this.elements.typeInfo.reload(this.local.typeList);
             this.nav.list.load();
@@ -119,7 +133,7 @@ class Header {
             });
             items.forEach((ele) => {
                 if (src[ele.id]) {
-                    src[ele.id].forEach((item) => {
+                    src[ele.id].forEach((item: LinkListInterface) => {
                         reXml += `<list id="${ele.id}" name="${item.name}" src="${encodeURIComponent(item.src)}"></list>\n`;
                     });
                 }
@@ -146,10 +160,10 @@ class Header {
         }
     }
 
-    update(cb) {
+    update(cb: Function) {
         const file = this.elements.addFile[0].files[0];
         const { type } = file;
-        const reader = new FileReader();
+        const reader: any = new FileReader();
         reader.readAsText(file);
         reader.onload = () => {
             if (/\w+\/json/.test(type)) {
@@ -162,13 +176,14 @@ class Header {
                 typeof cb === 'function' && cb(this.parseXML(reader.result));
             }
         };
-        reader.onerror = (e) => {
+        reader.onerror = (e: any) => {
             console.log(e);
         };
     }
 
-    parseXML(result) {
-        const json = {
+    parseXML(result: string) {
+        const json: any = {
+            typeList: {},
             srcList: {},
         };
         const parser = new DOMParser();
@@ -177,24 +192,24 @@ class Header {
         const items = xmlDoc.getElementsByTagName('item');
         const list = xmlDoc.getElementsByTagName('list');
         json.typeList = {
-            value: this.getAttributeValue(type, 'value'),
-            maxHeight: this.getAttributeValue(type, 'height'),
+            value: Header.getAttributeValue(type, 'value'),
+            maxHeight: Header.getAttributeValue(type, 'height'),
             items: [],
         };
         for (let i = 0, len = items.length; i < len; i += 1) {
             const ele = items[i];
             json.typeList.items.push({
-                id: this.getAttributeValue(ele, 'id'),
-                name: this.getAttributeValue(ele, 'name'),
+                id: Header.getAttributeValue(ele, 'id'),
+                name: Header.getAttributeValue(ele, 'name'),
             });
         }
         for (let i = 0, len = list.length; i < len; i += 1) {
             const ele = list[i];
-            const id = this.getAttributeValue(ele, 'id');
+            const id = Header.getAttributeValue(ele, 'id');
             if (typeof id !== 'undefined') {
                 const it = {
-                    src: decodeURIComponent(this.getAttributeValue(ele, 'src')),
-                    name: this.getAttributeValue(ele, 'name'),
+                    src: decodeURIComponent(Header.getAttributeValue(ele, 'src')),
+                    name: Header.getAttributeValue(ele, 'name'),
                 };
                 if (json.srcList[id]) {
                     json.srcList[id].push(it);
@@ -206,7 +221,7 @@ class Header {
         return json;
     }
 
-    static getAttributeValue(xmlNode, attrName) {
+    static getAttributeValue(xmlNode: Element, attrName: string) {
         if (!xmlNode) return '';
         if (!xmlNode.attributes) return '';
         if (xmlNode.attributes[attrName] !== null) return xmlNode.attributes[attrName].value;

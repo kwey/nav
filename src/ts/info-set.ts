@@ -1,7 +1,23 @@
-import Utils from '../utils/utils';
+import Utils from './utils';
+
+import Nav from './nav';
+import { SelectOptionsInterface } from '../../ui/src/ts/select';
+import { LinkOptionsInterface, LinkListInterface } from '../../ui/src/ts/link';
+
+export interface LocalInterface {
+    typeList: SelectOptionsInterface;
+    srcList: LinkOptionsInterface;
+}
+export interface SetSrcInterface extends LinkListInterface{
+    typeId: string;
+}
 
 class InfoSet {
-    constructor(nav) {
+    prefix: string;
+    nav: Nav;
+    local: LocalInterface;
+
+    constructor(nav: Nav) {
         this.nav = nav;
         this.prefix = this.nav.prefix;
         this.init();
@@ -20,16 +36,18 @@ class InfoSet {
                     maxHeight: 100,
                     items: [],
                 },
-                srcList: {},
+                srcList: {
+                    list: [],
+                },
             };
             this.setLocalSettings();
         }
     }
 
-    setSrcInfo(info, cb) {
+    setSrcInfo(info: SetSrcInterface | SetSrcInterface[], cb: Function) {
         const infoList = Array.isArray(info) ? info : [info];
         let more = 0;
-        infoList.forEach((item) => {
+        infoList.forEach((item: SetSrcInterface) => {
             const hasSrc = this.verifyDistinct(item);
             if (hasSrc) {
                 console.log(1111111);
@@ -41,19 +59,19 @@ class InfoSet {
         more && this.setLocalSettings();
     }
 
-    setLocalSettings(list) {
+    setLocalSettings(list?: any) {
         this.local = list ? $.extend(true, this.local, list) : this.local;
         Utils.setLocalSettings(`${this.prefix}-kwe`, JSON.stringify(this.local));
     }
 
-    verifyDistinct(item) {
+    verifyDistinct(item: SetSrcInterface) {
         const { typeId, name, src } = item;
         const list = this.local.typeList.items;
         const hasType = list.some(ele => ele.id === typeId);
         this.local.srcList[typeId] = this.local.srcList[typeId] || [];
         const l = this.local.srcList[typeId];
         if (hasType) {
-            const hasSrc = l && l.some(ele => ele.name === name && ele.src === src);
+            const hasSrc = l && l.some((ele: LinkListInterface) => ele.name === name && ele.src === src);
             if (hasSrc) {
                 return true;
             }
@@ -62,7 +80,7 @@ class InfoSet {
         }
         list.push({
             name: typeId,
-            id: list.lenght,
+            id: list.length + '-' + Utils.guid(1),
         });
         l.push({ name, src });
         return false;

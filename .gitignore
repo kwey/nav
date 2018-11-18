@@ -1,6 +1,5 @@
 .idea/
 .vscode/
-release/
 dist/
 node_modules/
 package-lock*

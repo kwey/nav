@@ -1,14 +1,24 @@
 
+import InfoSet from './info-set';
+import Template from './template';
+import Header from './header';
+import List from './list';
 
-import '../css/index.less';
-
-import Template from './src/template';
-import Header from './src/header';
-import List from './src/list';
-import InfoSet from './src/info-set';
+export interface ConfigInterface {
+    prefix: string;
+    container: HTMLElement;
+}
 
 class Nav {
-    constructor(config) {
+    config: ConfigInterface;
+    prefix: string;
+    container: HTMLElement;
+    infoSet: InfoSet;
+    template: Template;
+    header: Header;
+    list: List;
+
+    constructor(config: ConfigInterface) {
         this.config = config;
         this.prefix = 'nav-x';
         this.container = config.container || document.createElement('div');
@@ -21,10 +31,10 @@ class Nav {
         this.template = new Template(this);
         this.header = new Header(this);
         this.list = new List(this);
-        console.log(Nav.getVersion());
+        console.log(this.getVersion());
     }
 
-    static getVersion() {
+    getVersion() {
         return {
             version: 'REPLACE_VERSION',
         };
