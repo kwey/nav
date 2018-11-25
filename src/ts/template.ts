@@ -22,7 +22,7 @@ class Template {
         this.list = $(`.${prefix}-list`);
     }
 
-    TPL() {
+    private TPL() {
         const { prefix } = this;
         return `<div class=${prefix}>
                     <div class="${prefix}-header"></div>

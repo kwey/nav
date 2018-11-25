@@ -1,12 +1,12 @@
 import Utils from './utils';
 
 import Nav from './nav';
-import { SelectOptionsInterface } from '../../ui/src/ts/select';
-import { LinkOptionsInterface, LinkListInterface } from '../../ui/src/ts/link';
+import { SelectOptionsInterface, SelectListInterface } from '../../ui/src/ts/select';
+import { LinkListInterface } from '../../ui/src/ts/link';
 
 export interface LocalInterface {
     typeList: SelectOptionsInterface;
-    srcList: LinkOptionsInterface;
+    srcList: {[key: string]: any[]};
 }
 export interface SetSrcInterface extends LinkListInterface{
     typeId: string;
@@ -33,57 +33,42 @@ class InfoSet {
             this.local = {
                 typeList: {
                     value: '0',
-                    maxHeight: 100,
+                    maxHeight: 150,
                     items: [],
                 },
-                srcList: {
-                    list: [],
-                },
+                srcList: {},
             };
             this.setLocalSettings();
         }
     }
-
-    setSrcInfo(info: SetSrcInterface | SetSrcInterface[], cb: Function) {
-        const infoList = Array.isArray(info) ? info : [info];
-        let more = 0;
-        infoList.forEach((item: SetSrcInterface) => {
-            const hasSrc = this.verifyDistinct(item);
-            if (hasSrc) {
-                console.log(1111111);
-            } else {
-                more++;
-                typeof cb === 'function' && cb();
-            }
-        });
-        more && this.setLocalSettings();
-    }
-
-    setLocalSettings(list?: any) {
-        this.local = list ? $.extend(true, this.local, list) : this.local;
-        Utils.setLocalSettings(`${this.prefix}-kwe`, JSON.stringify(this.local));
-    }
-
-    verifyDistinct(item: SetSrcInterface) {
-        const { typeId, name, src } = item;
+    // 保存类型
+    setTypeInfo(info: SelectListInterface, cb?: Function) {
         const list = this.local.typeList.items;
-        const hasType = list.some(ele => ele.id === typeId);
+        const hasType = list.some(ele => ele.id === info.id);
+        this.local.typeList.value = info.id;
+        if (!hasType) {
+            this.local.typeList.items.push(info);
+            this.local.srcList[info.id] = [];
+        }
+        typeof cb === 'function' && cb();
+        this.setLocalSettings();
+    }
+    // 保存记录
+    setSrcInfo(info: SetSrcInterface, cb?: Function) {
+        const { typeId, name, src } = info;
         this.local.srcList[typeId] = this.local.srcList[typeId] || [];
         const l = this.local.srcList[typeId];
-        if (hasType) {
-            const hasSrc = l && l.some((ele: LinkListInterface) => ele.name === name && ele.src === src);
-            if (hasSrc) {
-                return true;
-            }
+        const hasSrc = l.some((ele: LinkListInterface) => ele.name === name && ele.src === src);
+        if (!hasSrc) {
             l.push({ name, src });
-            return false;
+            typeof cb === 'function' && cb();
+            this.setLocalSettings();
         }
-        list.push({
-            name: typeId,
-            id: list.length + '-' + Utils.guid(1),
-        });
-        l.push({ name, src });
-        return false;
+    }
+    // 存储到本地
+    setLocalSettings(list?: LocalInterface) {
+        this.local = list ? $.extend(true, this.local, list) : this.local;
+        Utils.setLocalSettings(`${this.prefix}-kwe`, JSON.stringify(this.local));
     }
 }
 

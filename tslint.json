@@ -28,9 +28,17 @@
       "no-plusplus": null, // ++
       "no-reference": false,
       "no-console": { 
-        "severity": "warning"
+        "severity": "warning",
+        "options": [
+          "debug",
+          "info",
+          "time",
+          "timeEnd",
+          "trace"
+      ]
       },
       "number-literal-format": false,
+      "member-ordering": false, // static 方法必须在public之前
       "no-unused-expression": false
     },
     "rulesDirectory": [

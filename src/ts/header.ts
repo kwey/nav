@@ -4,7 +4,7 @@ import { Select, Input, Button } from '../../ui/src/ui';
 import Nav from './nav';
 import { LocalInterface } from './info-set';
 import { LinkListInterface } from '../../ui/src/ts/link';
-
+import { SelectListInterface } from '../../ui/src/ts/select';
 export interface LocalInterface {
     prefix: string;
     container: HTMLElement;
@@ -23,10 +23,11 @@ class Header {
         this.container = this.nav.template.header;
         this.local = this.nav.infoSet.local;
         this.init();
+        this.golbalEvents();
     }
 
     init() {
-        const { prefix } = this;   
+        const { prefix } = this;
         this.container.append(this.TPL());
 
         this.elements = {
@@ -42,27 +43,33 @@ class Header {
                 name: '下载',
             }),
         };
+    }
 
-        this.elements.typeInfo.on('input', (e: any) => {
-            this.local.typeList.items.push(e);
-            this.local.typeList.value = e.id;
-            this.local.srcList[e.id] = [];
-            this.nav.infoSet.setLocalSettings();
+    private golbalEvents() {
+        // 回车 添加类型
+        this.elements.typeInfo.on('input', (item: SelectListInterface) => {
+            this.nav.infoSet.setTypeInfo(item);
             this.elements.typeInfo.reload(this.local.typeList);
         });
-
+        // 选择类型
+        this.elements.typeInfo.on('change', (item: SelectListInterface) => {
+            this.nav.infoSet.setTypeInfo(item);
+        });
+        // 上传src
         this.elements.submit.on('click', () => {
             this.upLoadSrc();
         });
-
+        // 下载json
         this.elements.download.on('click', () => {
             this.downloadJSON();
         });
+        //下载xml
         this.elements.download.on('contextmenu', (e: any) => {
             e.preventDefault();
             this.downloadXML();
             return false;
         });
+        // 上传文件
         const browser = Utils.browser;
         if (!browser.version.trident && !browser.version.edge) {
             this.elements.addFile.on('change', () => {
@@ -77,16 +84,7 @@ class Header {
             }, 0);
         }
     }
-
-    fileChange() {
-        this.update((result: LocalInterface) => {
-            this.nav.infoSet.setLocalSettings(result);
-            this.elements.typeInfo.reload(this.local.typeList);
-            this.nav.list.load();
-        });
-    }
-
-    TPL() {
+    private TPL() {
         const { prefix } = this;
         return `
             <div class="${prefix}-add-file">点击或拖拽上传文件（xml, json）<input type="file" class="drop"></div>
@@ -101,8 +99,17 @@ class Header {
             </div>
             `;
     }
+    // 上传文件
+    private fileChange() {
+        this.update((result: LocalInterface) => {
+            this.nav.infoSet.setLocalSettings(result);
+            this.elements.typeInfo.reload(this.local.typeList);
+            this.nav.list.load();
+        });
+    }
 
-    upLoadSrc() {
+    // 上传单条记录
+    private upLoadSrc() {
         const typeId = this.local.typeList.value;
         const name = $.trim(this.elements.nameInfo.value());
         const src = $.trim(this.elements.srcInfo.value());
@@ -120,8 +127,8 @@ class Header {
             console.log(123123);
         }
     }
-
-    downloadXML() {
+    // 下载xml
+    private downloadXML() {
         try {
             const { local } = this;
             const { items } = local.typeList;
@@ -147,8 +154,8 @@ class Header {
             console.warn(error);
         }
     }
-
-    downloadJSON() {
+    // 下载json
+    private downloadJSON() {
         try {
             Utils.download({
                 text: JSON.stringify(this.nav.infoSet.local, null, '\t'),
@@ -159,8 +166,8 @@ class Header {
             console.warn(error);
         }
     }
-
-    update(cb: Function) {
+    // 上传文件
+    private update(cb: Function) {
         const file = this.elements.addFile[0].files[0];
         const { type } = file;
         const reader: any = new FileReader();
@@ -180,8 +187,8 @@ class Header {
             console.log(e);
         };
     }
-
-    parseXML(result: string) {
+    // 格式化xml -> json
+    private parseXML(result: string) {
         const json: any = {
             typeList: {},
             srcList: {},

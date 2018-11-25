@@ -1,17 +1,18 @@
 // import Utils from '../utils';
 
-import { Link } from '../../ui/src/ui';
+import { Link, Contextmenu } from '../../ui/src/ui';
 import { SelectListInterface } from '../../ui/src/ts/select';
+import { LocalInterface } from './info-set';
 import Nav from './nav';
 
 class List {
     nav: Nav;
     prefix: string;
-    container: any;
-    local: any;
+    container: JQuery;
+    local: LocalInterface;
     index: number;
     color: string[];
-    listItem: any;
+    listItem: JQuery;
 
     constructor(nav: Nav) {
         this.nav = nav;
@@ -26,8 +27,27 @@ class List {
         this.color = ['#0ff', '#9cf', '#ccf', '#fcf', '#cff', '#3cf', '#ffc'];
         this.load();
         this.listItem = $(`.${this.prefix}-list-item`);
+        this.contextMenu();
     }
-
+    private contextMenu() {
+        new Contextmenu(this.container[0], {
+            menu: [],
+            changedMode: true,
+            changedType: 0,
+            onChange: (e: MouseEvent) => {
+                const menu = [
+                    {
+                        type: 'ss',
+                        text: '更新历史',
+                        click: () => {
+                            console.log('version', e);
+                        }
+                    },
+                ];
+                return menu;
+            }
+        });
+    }
     load() {
         this.container.html('');
         this.index = 0;

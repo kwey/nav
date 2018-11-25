@@ -10,7 +10,7 @@
     "prebuild": "rm -rf dist",
     "build": "webpack --env.gcc --display=errors-only",
     "debug": "webpack --env.dev",
-    "dev": "webpack-dev-server --hot --env.dev --config webpack.config.js"
+    "dev": "webpack-dev-server --hot --env.dev"
   },
   "browserslist": [
     "ie 11",
