@@ -6,10 +6,10 @@ import { LinkListInterface } from '../../ui/src/ts/link';
 
 export interface LocalInterface {
     typeList: SelectOptionsInterface;
-    srcList: {[key: string]: any[]};
+    srcList: {[key: string]: LinkListInterface[]};
 }
 export interface SetSrcInterface extends LinkListInterface{
-    typeId: string;
+    tid: string;
 }
 
 class InfoSet {
@@ -33,7 +33,7 @@ class InfoSet {
             this.local = {
                 typeList: {
                     value: '0',
-                    maxHeight: 150,
+                    maxHeight: 200,
                     items: [],
                 },
                 srcList: {},
@@ -47,7 +47,7 @@ class InfoSet {
         const hasType = list.some(ele => ele.id === info.id);
         this.local.typeList.value = info.id;
         if (!hasType) {
-            this.local.typeList.items.push(info);
+            this.local.typeList.items.unshift(info);
             this.local.srcList[info.id] = [];
         }
         typeof cb === 'function' && cb();
@@ -55,21 +55,29 @@ class InfoSet {
     }
     // 保存记录
     setSrcInfo(info: SetSrcInterface, cb?: Function) {
-        const { typeId, name, src } = info;
-        this.local.srcList[typeId] = this.local.srcList[typeId] || [];
-        const l = this.local.srcList[typeId];
-        const hasSrc = l.some((ele: LinkListInterface) => ele.name === name && ele.src === src);
+        const { tid, name, src, id } = info;
+        const l = this.local.srcList[tid];
+        const hasSrc = l.some((ele: LinkListInterface) => ele.id === id);
         if (!hasSrc) {
-            l.push({ name, src });
+            l.push({ name, src , id});
             typeof cb === 'function' && cb();
             this.setLocalSettings();
         }
     }
     // 存储到本地
     setLocalSettings(list?: LocalInterface) {
-        this.local = list ? $.extend(true, this.local, list) : this.local;
+        if (list) {
+            this.mergeLocal(list);
+        }
         Utils.setLocalSettings(`${this.prefix}-kwe`, JSON.stringify(this.local));
     }
+    // 合并local
+    private mergeLocal(list: LocalInterface) {
+        const { typeList, srcList } = this.local;
+        this.local.typeList = $.extend(true, typeList, list.typeList);
+        this.local.srcList = $.extend(true, srcList, list.srcList);
+    }
+
 }
 
 export default InfoSet;

@@ -66,7 +66,47 @@ class Utils {
                 String.fromCharCode.apply(String, new Uint8Array(buf)))),
         };
     }
-
+    static extend(...arg: any) {
+        let options;
+        let target = arguments[0] || {};
+        const length = arguments.length;
+        let i = 1;
+        let deep = false;
+        let clone;
+        if (typeof target === 'boolean') {
+            deep = target;
+            target = arguments[1] || {};
+            i = 2;
+        }
+        if (typeof target !== 'object' && typeof target !== 'function') {
+            target = {};
+        }
+        if (length === i) {
+            target = this;
+            --i;
+        }
+        /* tslint:disable */
+        if ((options = arg[i]) != null) {
+            for (let name in options) {
+                let src = target[name];
+                let copy = options[name];
+                if (src === copy) {
+                    continue;
+                }
+                if (deep && copy && typeof copy === 'object') {
+                    if (Array.isArray(copy)) {
+                        clone = src && Array.isArray(src) ? src : [];
+                    } else {
+                        clone = src && typeof src === 'object' ? src : {};
+                    }
+                    target[name] = this.extend(deep, clone, copy);
+                } else if (copy !== undefined) {
+                    target[name] = copy;
+                }
+            }
+    　　}
+    　　return target;
+    }
     /**
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
      */

@@ -70,5 +70,20 @@ module.exports = {
                 },
             ],
         },
+        {
+            test: /\.svg$/,
+            use:[
+            {
+                loader: 'svgo-inline-loader',
+                options: {
+                    plugins: [{
+                        removeDimensions: true,
+                    },{
+                        removeViewBox: false,
+                    }
+                    ]
+                }
+            }]
+        },
     ]
 }

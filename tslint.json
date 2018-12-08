@@ -25,7 +25,7 @@
       "no-use-before-declare": null,
       "deprecation": null,
       "prefer-const": true,
-      "no-plusplus": null, // ++
+      "no-plusplus": true, // ++
       "no-reference": false,
       "no-console": { 
         "severity": "warning",

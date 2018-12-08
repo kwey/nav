@@ -6,6 +6,7 @@ class Template {
     prefix: string;
     header: JQuery;
     list: JQuery;
+    file: JQuery;
 
     constructor(nav: Nav) {
         this.nav = nav;
@@ -20,6 +21,7 @@ class Template {
 
         this.header = $(`.${prefix}-header`);
         this.list = $(`.${prefix}-list`);
+        this.file = $(`.${prefix}-file`);
     }
 
     private TPL() {
@@ -27,6 +29,7 @@ class Template {
         return `<div class=${prefix}>
                     <div class="${prefix}-header"></div>
                     <div class="${prefix}-list"></div>
+                    <div class="${prefix}-file"></div>
                 </div>`;
     }
 }

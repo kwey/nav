@@ -38,6 +38,7 @@
     "less-loader": "^4.1.0",
     "postcss-loader": "^3.0.0",
     "style-loader": "^0.23.1",
+    "svgo-inline-loader": "0.0.6",
     "ts-loader": "^5.2.2",
     "tslint": "^5.11.0",
     "tslint-config-alloy": "^0.1.0",
