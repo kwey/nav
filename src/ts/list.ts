@@ -41,6 +41,7 @@ class List {
         new Contextmenu(this.container[0], {
             menu: [],
             changedMode: true,
+            cmClass: this.nav.cmClass,
             changedType: 0,
             onChange: (e: MouseEvent) => {
                 const target = e.target as HTMLElement;
@@ -58,7 +59,7 @@ class List {
                         type: 'text',
                         text: '更新历史 ' + metadata.hash,
                         click: () => {
-                            console.log('version', metadata.hash);
+                            window.open('https://github.com/KWEY/nav', '_blank');
                         }
                     },
                 ];
@@ -86,6 +87,7 @@ class List {
                     list,
                     bg: color,
                     border: color,
+                    cmClass: this.nav.cmClass,
                 }).container);
             }
             this.index += 1;

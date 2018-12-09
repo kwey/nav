@@ -17,6 +17,7 @@ export interface ElementsInterface {
 class Nav {
     config: ConfigInterface;
     prefix: string;
+    cmClass: string;
     container: JQuery;
     infoSet: InfoSet;
     template: Template;
@@ -27,6 +28,7 @@ class Nav {
     constructor(config: ConfigInterface) {
         this.config = config;
         this.prefix = 'nav-x';
+        this.cmClass = 'nav-cm'; // 供右键选择target
         this.container = $(`.${config.className}`) || $(document.createElement('div'));
         this.init();
         return this;

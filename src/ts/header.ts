@@ -29,7 +29,10 @@ class Header {
 
         this.elements = {
             addinfo: this.container.find(`.${prefix}-add-info`),
-            typeInfo: new Select($(`.${prefix}-type`)[0], this.local.typeList),
+            typeInfo: new Select($(`.${prefix}-type`)[0], {
+                items: this.local.typeList.items,
+                cmClass: this.nav.cmClass,
+            }),
             nameInfo: new Input($(`.${prefix}-name-input`)[0], {}),
             srcInfo: new Input($(`.${prefix}-src-input`)[0], {}),
             submit: new Button($(`.${prefix}-add-btn`)[0], {
@@ -74,6 +77,7 @@ class Header {
             menu: [],
             changedMode: true,
             changedType: 0,
+            cmClass: this.nav.cmClass,
             onChange: (e: MouseEvent) => {
                 const target = e.target as HTMLElement;
                 const id = $(target).data('id');
