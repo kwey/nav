@@ -27,7 +27,7 @@ class List {
 
     init() {
         this.index = 0;
-        this.color = ['#0ff', '#9cf', '#ccf', '#fcf', '#cff', '#3cf', '#ffc'];
+        this.color = ['#0ff', '#9cf', '#ccf', '#fcf', '#cff', '#3cf', '#faf'];
         this.load();
         this.listItem = $(`.${this.prefix}-list-item`);
         this.contextMenu();
@@ -100,6 +100,7 @@ class List {
             if (item.id === id) {
                 srclist.splice(index, 1);
                 this.load();
+                this.nav.infoSet.setLocalSettings();
                 return true;
             }
         });

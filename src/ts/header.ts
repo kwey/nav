@@ -56,6 +56,11 @@ class Header {
         this.elements.submit.on('click', () => {
             this.upLoadSrc();
         });
+        this.elements.srcInfo.on('keydown', (e: KeyboardEvent) => {
+            if (e.keyCode === 13 || e.charCode === 13) {
+                this.upLoadSrc();
+            }
+        });
         // 绑定右键事件
         this.typeMenuEvent();
         // reload
@@ -67,7 +72,6 @@ class Header {
     private typeMenuEvent() {
         this.typeMenu = new Contextmenu($(`.${this.prefix}-type`)[0], {
             menu: [],
-            isCurrent: true,
             changedMode: true,
             changedType: 0,
             onChange: (e: MouseEvent) => {

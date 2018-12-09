@@ -8,7 +8,7 @@ import Global from './global';
 
 export interface ConfigInterface {
     prefix: string;
-    container: HTMLElement;
+    className: string;
 }
 export interface ElementsInterface {
     [key: string]: JQuery;
@@ -27,7 +27,7 @@ class Nav {
     constructor(config: ConfigInterface) {
         this.config = config;
         this.prefix = 'nav-x';
-        this.container = $(config.container) || $(document.createElement('div'));
+        this.container = $(`.${config.className}`) || $(document.createElement('div'));
         this.init();
         return this;
     }
