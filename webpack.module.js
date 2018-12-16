@@ -9,6 +9,9 @@ module.exports = {
             enforce: 'pre',
             use: [
                 {
+                    loader: 'template-string-optimize-loader',
+                },
+                {
                     loader: 'ts-loader',
                 },
                 {
@@ -23,6 +26,7 @@ module.exports = {
                     loader: 'style-loader',
                     options: {
                         attrs: {'data-injector': 'kwe-nav'},
+                        singleton: true,
                     },
                 },
                 {

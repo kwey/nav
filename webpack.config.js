@@ -4,6 +4,8 @@ const modules = require('./webpack.module');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const pkg = require('./package.json');
 const git = require('git-rev-sync');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
 
 module.exports = (env = {}) => {
     let tool = '';
@@ -62,22 +64,22 @@ module.exports = (env = {}) => {
     }
     if (!env.dev) {
         if (env.gcc) {
+            // config.plugins.push(new BundleAnalyzerPlugin())
             config.optimization.minimizer.push(
                 new UglifyJsPlugin({
                     test: /\.js($|\?)/i,
                     uglifyOptions: {
-                        warnings: false,
-                        parse: {},
                         compress: {
                             warnings: false,
                             drop_debugger: true,
                             drop_console: true
                         },
-                        mangle: true, // Note `mangle.properties` is `false` by default.
-                        output: null,
-                        toplevel: false,
+                        output:{
+                            beautify: false,
+                            comments: false,
+                        },
+                        toplevel: true,
                         nameCache: null,
-                        ie8: false,
                         keep_fnames: false,
                     }
                 })

@@ -8,9 +8,10 @@
   "license": "ISC",
   "scripts": {
     "prebuild": "rm -rf dist",
-    "build": "webpack --env.gcc --display=errors-only",
+    "build": "webpack --env.gcc --display=errors-only && npm run cp",
     "debug": "webpack --env.dev",
-    "dev": "webpack-dev-server --hot --env.dev"
+    "dev": "webpack-dev-server --hot --env.dev",
+    "cp": "./push.sh"
   },
   "browserslist": [
     "ie 11",
@@ -34,11 +35,12 @@
     "css-loader": "^1.0.0",
     "cssnano": "^4.1.7",
     "git-rev-sync": "^1.12.0",
-    "less": "^3.8.1",
+    "less": "^3.9.0",
     "less-loader": "^4.1.0",
     "postcss-loader": "^3.0.0",
     "style-loader": "^0.23.1",
     "svgo-inline-loader": "0.0.6",
+    "template-string-optimize-loader": "^3.0.0",
     "ts-loader": "^5.2.2",
     "tslint": "^5.11.0",
     "tslint-config-alloy": "^0.1.0",
@@ -48,6 +50,7 @@
     "uglifyjs-webpack-plugin": "^2.0.1",
     "url-loader": "^1.1.2",
     "webpack": "^4.23.0",
+    "webpack-bundle-analyzer": "^3.0.3",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.1.10"
   }
