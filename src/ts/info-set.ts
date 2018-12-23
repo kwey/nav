@@ -83,7 +83,7 @@ class InfoSet {
         const url = this.nav.config.url;
         if (url) {
             $.ajax({
-                url: url,
+                url,
                 type: 'get',
                 dataType: 'json',
                 success(res: LocalInterface) {
@@ -92,7 +92,7 @@ class InfoSet {
                 error() {
                     cb(null);
                 }
-            })
+            });
         } else {
             cb(null);
         }
