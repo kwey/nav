@@ -1,3 +1,3 @@
 
 
-cp -vf ./dist/nav.js ../kwey/static/js
+cp -vf ./dist/nav.js ../kwey/static/plugins

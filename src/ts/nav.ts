@@ -9,6 +9,7 @@ import Global from './global';
 export interface ConfigInterface {
     prefix: string;
     className: string;
+    url: string;
 }
 export interface ElementsInterface {
     [key: string]: JQuery;

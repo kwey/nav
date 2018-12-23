@@ -30,15 +30,22 @@ class InfoSet {
             console.log(error);
         }
         if (!this.local || !this.local.typeList || !this.local.srcList) {
-            this.local = {
-                typeList: {
-                    value: '0',
-                    maxHeight: 200,
-                    items: [],
-                },
-                srcList: {},
-            };
-            this.setLocalSettings();
+            this.getRemote((data: LocalInterface) => {
+                if (data) {
+                    this.local = data;
+                }
+                if (!this.local || !this.local.typeList || !this.local.srcList) {
+                    this.local = {
+                        typeList: {
+                            value: '0',
+                            maxHeight: 200,
+                            items: [],
+                        },
+                        srcList: {},
+                    };
+                }
+                this.setLocalSettings();
+            });
         }
     }
     // 保存类型
@@ -70,6 +77,25 @@ class InfoSet {
             this.mergeLocal(list);
         }
         Utils.setLocalSettings(`${this.prefix}-kwe`, JSON.stringify(this.local));
+    }
+    // 获取外部列表
+    getRemote(cb: Function) {
+        const url = this.nav.config.url;
+        if (url) {
+            $.ajax({
+                url: url,
+                type: 'get',
+                dataType: 'json',
+                success(res: LocalInterface) {
+                    cb(res);
+                },
+                error() {
+                    cb(null);
+                }
+            })
+        } else {
+            cb(null);
+        }
     }
     // 合并local
     private mergeLocal(list: LocalInterface) {
