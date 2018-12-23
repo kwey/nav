@@ -59,6 +59,11 @@ class Header {
         this.elements.submit.on('click', () => {
             this.upLoadSrc();
         });
+        this.elements.nameInfo.on('keydown', (e: KeyboardEvent) => {
+            if (e.keyCode === 13 || e.charCode === 13) {
+                this.upLoadSrc();
+            }
+        });
         this.elements.srcInfo.on('keydown', (e: KeyboardEvent) => {
             if (e.keyCode === 13 || e.charCode === 13) {
                 this.upLoadSrc();
