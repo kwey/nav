@@ -4,19 +4,19 @@
 .@{prefix} {
 
     &-list {
-        display: flex;
-        flex-wrap: wrap;
         overflow: auto;
         position: relative;
-        align-items: flex-start;
-        justify-content: center;
         margin: 20px auto 0;
         text-align: center;
+        white-space:nowrap;
 
         &-item {
-            flex: auto;
+            display: inline-block;
             min-width: 80px;
             max-width: 100px;
+            height: 100%;
+            vertical-align: top;
+
         }
     }
 
