@@ -100,7 +100,7 @@ class File {
     private downloadJSON() {
         try {
             Utils.download({
-                text: JSON.stringify(this.local, null, '\t'),
+                text: JSON.stringify(this.local, null),
                 type: 'text/json;charset=utf-8',
                 fileName: 'nav-x.json',
             });
