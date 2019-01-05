@@ -6,7 +6,10 @@ import { LinkListInterface } from '../../ui/src/ts/link';
 
 export interface LocalInterface {
     typeList: SelectOptionsInterface;
-    srcList: {[key: string]: LinkListInterface[]};
+    srcList: LocalSrcInterface;
+}
+interface LocalSrcInterface {
+    [key: string]: LinkListInterface[];
 }
 export interface SetSrcInterface extends LinkListInterface{
     tid: string;
@@ -30,19 +33,11 @@ class InfoSet {
             console.log(error);
         }
         if (!this.local || !this.local.typeList || !this.local.srcList) {
+            this.local = Utils.localInfoDefault();
             this.getRemote((data: LocalInterface) => {
                 if (data) {
-                    this.local = data;
-                }
-                if (!this.local || !this.local.typeList || !this.local.srcList) {
-                    this.local = {
-                        typeList: {
-                            value: '0',
-                            maxHeight: 200,
-                            items: [],
-                        },
-                        srcList: {},
-                    };
+                    this.mergeLocal(data);
+                    this.nav.reload();
                 }
                 this.setLocalSettings();
             });
@@ -70,6 +65,25 @@ class InfoSet {
             typeof cb === 'function' && cb();
             this.setLocalSettings();
         }
+    }
+     // 删除type
+    removeType(id: string) {
+        const typelist = this.local.typeList.items;
+        Array.isArray(typelist) && typelist.some((item: SelectListInterface, index: number) => {
+            if (item.id === id) {
+                typelist.splice(index, 1);
+                if (typelist.length && this.local.typeList.value === id) {
+                    this.local.typeList.value = this.local.typeList.items[0].id;
+                }
+                if (this.local.srcList[id]) {
+                    delete this.local.srcList[id];
+                    this.nav.list.load();
+                }
+                this.setLocalSettings();
+                return true;
+            }
+        });
+        return false;
     }
     // 存储到本地
     setLocalSettings(list?: LocalInterface) {
@@ -100,8 +114,43 @@ class InfoSet {
     // 合并local
     private mergeLocal(list: LocalInterface) {
         const { typeList, srcList } = this.local;
-        this.local.typeList = $.extend(true, typeList, list.typeList);
-        this.local.srcList = $.extend(true, srcList, list.srcList);
+        this.local.typeList = this.mergeType(typeList, list.typeList);
+        this.local.srcList = this.mergeSrc(srcList, list.srcList);
+    }
+    // 合并type
+    private mergeType(targetType: SelectOptionsInterface, list: SelectOptionsInterface) {
+        let hasType = false;
+        Array.isArray(list.items) && list.items.forEach((item: SelectListInterface) => {
+            hasType = targetType.items.some((type: SelectListInterface) => {
+                return type.id === item.id;
+            });
+            if (!hasType) {
+                targetType.items.push(item);
+            }
+        });
+        return targetType;
+    }
+    // 合并src
+    private mergeSrc(targetSrc: LocalSrcInterface, srcList: LocalSrcInterface) {
+        let hasSrc = false;
+        const keys = Object.keys(srcList);
+        Array.isArray(keys) && keys.forEach((item: string) => {
+            const target = targetSrc[item];
+            const source = srcList[item];
+            if (!target || target.length === 0) {
+                targetSrc[item] = source || [];
+            } else {
+                Array.isArray(source) && source.forEach((link: LinkListInterface) => {
+                    hasSrc = target.some((src: SelectListInterface) => {
+                        return src.id === link.id;
+                    });
+                    if (!hasSrc) {
+                        targetSrc[item].push(link);
+                    }
+                });
+            }
+        });
+        return targetSrc;
     }
 
 }

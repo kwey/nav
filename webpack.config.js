@@ -54,6 +54,7 @@ module.exports = (env = {}) => {
             compress: true,
             overlay: true,
             openPage: './demo/index.html',
+            disableHostCheck: true,
             port: 8080,
             publicPath: '/demo/',
             headers: {

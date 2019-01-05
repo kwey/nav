@@ -113,22 +113,9 @@ class Header {
     }
     // 删除type
     private removeType(id: string) {
-        const typelist = this.local.typeList.items;
-        Array.isArray(typelist) && typelist.some((item: SelectListInterface, index: number) => {
-            if (item.id === id) {
-                typelist.splice(index, 1);
-                if (typelist.length && this.local.typeList.value === id) {
-                    this.local.typeList.value = this.local.typeList.items[0].id;
-                }
-                this.elements.typeInfo.removeType(id);
-                if (this.local.srcList[id]) {
-                    delete this.local.srcList[id];
-                    this.nav.list.load();
-                }
-                this.nav.infoSet.setLocalSettings();
-                return true;
-            }
-        });
+        if (this.nav.infoSet.removeType(id)) {
+            this.elements.typeInfo.removeType(id);
+        }
     }
 
     // 上传单条记录 name中含转义字符会导致xml无法获取

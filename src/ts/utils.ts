@@ -1,4 +1,4 @@
-
+import { LocalInterface } from './info-set';
 export interface DownloadInterface {
     text: any;
     fileName: string;
@@ -382,6 +382,16 @@ class Utils {
             out += (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
         }
         return out;
+    }
+    static localInfoDefault(): LocalInterface {
+        return {
+            typeList: {
+                value: '0',
+                maxHeight: 200,
+                items: [],
+            },
+            srcList: {},
+        };
     }
 }
 
