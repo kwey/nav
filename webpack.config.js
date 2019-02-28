@@ -4,7 +4,7 @@ const modules = require('./webpack.module');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const pkg = require('./package.json');
 const git = require('git-rev-sync');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 
 module.exports = (env = {}) => {
@@ -55,7 +55,7 @@ module.exports = (env = {}) => {
             overlay: true,
             openPage: './demo/index.html',
             disableHostCheck: true,
-            port: 8080,
+            port: 8081,
             publicPath: '/demo/',
             headers: {
                 "X-Custom-Header": "yes",
