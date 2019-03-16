@@ -69,7 +69,7 @@ class InfoSet {
      // 删除type
     removeType(id: string) {
         const typelist = this.local.typeList.items;
-        Array.isArray(typelist) && typelist.some((item: SelectListInterface, index: number) => {
+        const hasType = Array.isArray(typelist) && typelist.some((item: SelectListInterface, index: number) => {
             if (item.id === id) {
                 typelist.splice(index, 1);
                 if (typelist.length && this.local.typeList.value === id) {
@@ -83,7 +83,7 @@ class InfoSet {
                 return true;
             }
         });
-        return false;
+        return hasType;
     }
     // 存储到本地
     setLocalSettings(list?: LocalInterface) {
