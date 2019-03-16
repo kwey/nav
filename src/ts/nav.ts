@@ -1,4 +1,5 @@
 
+const emitter = require('event-emitter');
 import InfoSet from './info-set';
 import Template from './template';
 import Header from './header';
@@ -12,14 +13,14 @@ export interface ConfigInterface {
     url: string;
 }
 export interface ElementsInterface {
-    [key: string]: JQuery;
+    [key: string]: any;
 }
 
-class Nav {
+abstract class Nav {
     config: ConfigInterface;
     prefix: string;
     cmClass: string;
-    container: JQuery;
+    container: HTMLElement;
     infoSet: InfoSet;
     template: Template;
     header: Header;
@@ -30,7 +31,8 @@ class Nav {
         this.config = config;
         this.prefix = 'nav-x';
         this.cmClass = 'nav-cm'; // 供右键选择target
-        this.container = $(`.${config.className}`) || $(document.createElement('div'));
+        this.container = document.querySelector(`.${config.className}`) || document.createElement('div');
+        emitter(this);
         this.init();
         return this;
     }
@@ -42,19 +44,16 @@ class Nav {
         this.list = new List(this);
         this.file = new File(this);
     }
+    getData() {
+        return this.infoSet.local;
+    }
     reload() {
-        this.trigger(Global.NAV_RELOAD);
+        this.emit(Global.NAV_RELOAD);
     }
-
-    bind(type: any, callback?: any) {
-        this.container.bind(type, callback);
-    }
-    unbind(type: string) {
-        this.container.unbind(type);
-    }
-    trigger(type: string) {
-        this.container.trigger.apply(this.container, [type, Array.prototype.slice.call(arguments, 1, arguments.length)]);
-    }
+    abstract on(type: string, listener: EventListener): void;
+    abstract once(type: string, listener: EventListener): void;
+    abstract off(type: string, listener: EventListener): void;
+    abstract emit(type: string, ...args: any[]): void;
 }
 
 export default Nav;

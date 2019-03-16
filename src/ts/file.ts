@@ -9,7 +9,7 @@ import { SelectListInterface } from '../../ui/src/ts/select';
 class File {
     prefix: string;
     nav: Nav;
-    container: JQuery;
+    container: HTMLElement;
     local: LocalInterface;
     elements: ElementsInterface;
 
@@ -24,21 +24,21 @@ class File {
 
     init() {
         const { prefix } = this;
-        this.container.append(this.TPL());
+        this.container.innerHTML =  this.TPL();
 
         this.elements = {
-            addFile: this.container.find(`.${prefix}-file-drop`),
-            download: this.container.find(`.${prefix}-file-download`),
+            addFile: this.container.querySelector(`.${prefix}-file-drop`),
+            download: this.container.querySelector(`.${prefix}-file-download`),
         };
     }
 
     private golbalEvents() {
         // 下载json
-        this.elements.download.on('click', () => {
+        this.elements.download.addEventListener('click', () => {
             this.downloadJSON();
         });
         //下载xml
-        this.elements.download.on('contextmenu', (e: any) => {
+        this.elements.download.addEventListener('contextmenu', (e: any) => {
             e.preventDefault();
             this.downloadXML();
             return false;
@@ -46,7 +46,7 @@ class File {
         // 上传文件
         const browser = Utils.browser;
         if (!browser.version.trident && !browser.version.edge) {
-            this.elements.addFile.on('change', () => {
+            this.elements.addFile.addEventListener('change', () => {
                 this.fileChange();
             });
         } else {
@@ -110,7 +110,7 @@ class File {
     }
     // 上传文件
     private update(cb: Function) {
-        const file = (this.elements.addFile[0] as any).files[0];
+        const file = (this.elements.addFile as any).files[0];
         const type = file.type;
         const reader: any = new FileReader();
         reader.readAsText(file);

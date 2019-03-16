@@ -96,14 +96,10 @@ class InfoSet {
     getRemote(cb: Function) {
         const url = this.nav.config.url;
         if (url) {
-            $.ajax({
-                url,
-                type: 'get',
-                dataType: 'json',
-                success(res: LocalInterface) {
+            Utils.fetch({ url }).then((res: LocalInterface) => {
+                if (res) {
                     cb(res);
-                },
-                error() {
+                } else {
                     cb(null);
                 }
             });
@@ -120,6 +116,7 @@ class InfoSet {
     // 合并type
     private mergeType(targetType: SelectOptionsInterface, list: SelectOptionsInterface) {
         let hasType = false;
+        targetType.value = list.value;
         Array.isArray(list.items) && list.items.forEach((item: SelectListInterface) => {
             hasType = targetType.items.some((type: SelectListInterface) => {
                 return type.id === item.id;

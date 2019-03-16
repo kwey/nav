@@ -1,12 +1,12 @@
-// import Utils from '../utils';
+// import Utils from './utils';
 import Nav from './nav';
 
 class Template {
     nav: Nav;
     prefix: string;
-    header: JQuery;
-    list: JQuery;
-    file: JQuery;
+    header: HTMLElement;
+    list: HTMLElement;
+    file: HTMLElement;
 
     constructor(nav: Nav) {
         this.nav = nav;
@@ -17,11 +17,12 @@ class Template {
     init() {
         const { prefix } = this;
         const { container } = this.nav;
-        $(container).html(this.TPL());
+        container.innerHTML = this.TPL();
+        // container.innerHTML = Utils.parseDom(this.TPL());
 
-        this.header = $(`.${prefix}-header`);
-        this.list = $(`.${prefix}-list`);
-        this.file = $(`.${prefix}-file`);
+        this.header = container.querySelector(`.${prefix}-header`);
+        this.list = container.querySelector(`.${prefix}-list`);
+        this.file = container.querySelector(`.${prefix}-file`);
     }
 
     private TPL() {

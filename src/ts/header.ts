@@ -9,7 +9,7 @@ import { SelectListInterface } from '../../ui/src/ts/select';
 class Header {
     prefix: string;
     nav: Nav;
-    container: JQuery;
+    container: HTMLElement;
     local: LocalInterface;
     elements: any;
     typeMenu: Contextmenu;
@@ -25,17 +25,18 @@ class Header {
 
     init() {
         const { prefix } = this;
-        this.container.append(this.TPL());
+        this.container.innerHTML = this.TPL();
 
         this.elements = {
-            addinfo: this.container.find(`.${prefix}-add-info`),
-            typeInfo: new Select($(`.${prefix}-type`)[0], {
+            addinfo: this.container.querySelector(`.${prefix}-add-info`),
+            typeInfo: new Select(this.container.querySelector(`.${prefix}-type`), {
+                value: this.local.typeList.value,
                 items: this.local.typeList.items,
                 cmClass: this.nav.cmClass,
             }),
-            nameInfo: new Input($(`.${prefix}-name-input`)[0], {}),
-            srcInfo: new Input($(`.${prefix}-src-input`)[0], {}),
-            submit: new Button($(`.${prefix}-add-btn`)[0], {
+            nameInfo: new Input(this.container.querySelector(`.${prefix}-name-input`), {}),
+            srcInfo: new Input(this.container.querySelector(`.${prefix}-src-input`), {}),
+            submit: new Button(this.container.querySelector(`.${prefix}-add-btn`), {
                 name: '上传',
             }),
         };
@@ -72,20 +73,20 @@ class Header {
         // 绑定右键事件
         this.typeMenuEvent();
         // reload
-        this.nav.bind(Global.NAV_RELOAD, () => {
+        this.nav.on(Global.NAV_RELOAD, () => {
             this.reload();
         });
     }
     // 类型右键
     private typeMenuEvent() {
-        this.typeMenu = new Contextmenu($(`.${this.prefix}-type`)[0], {
+        this.typeMenu = new Contextmenu(this.container.querySelector(`.${this.prefix}-type`), {
             menu: [],
             changedMode: true,
             changedType: 0,
             cmClass: this.nav.cmClass,
             onChange: (e: MouseEvent) => {
                 const target = e.target as HTMLElement;
-                const id = $(target).data('id');
+                const id = target.getAttribute('data-id');
                 const name = target.textContent;
                 const menu = [
                     {
@@ -121,8 +122,8 @@ class Header {
     // 上传单条记录 name中含转义字符会导致xml无法获取
     private upLoadSrc() {
         const tid = this.local.typeList.value;
-        const name = $.trim(this.elements.nameInfo.value());
-        const src = $.trim(this.elements.srcInfo.value());
+        const name = this.elements.nameInfo.value();
+        const src = this.elements.srcInfo.value();
         this.local.srcList[tid] = this.local.srcList[tid] || [];
         const id = this.local.srcList[tid].length + '_' + Utils.guid(1);
         if (name && src) {

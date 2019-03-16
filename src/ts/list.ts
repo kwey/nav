@@ -1,4 +1,4 @@
-// import Utils from '../utils';
+import Utils from './utils';
 
 import { Link, Contextmenu } from '../../ui/src/ui';
 import { SelectListInterface } from '../../ui/src/ts/select';
@@ -10,11 +10,11 @@ import Global from './global';
 class List {
     nav: Nav;
     prefix: string;
-    container: JQuery;
+    container: HTMLElement;
     local: LocalInterface;
     index: number;
     color: string[];
-    listItem: JQuery;
+    listItem: HTMLElement;
 
     constructor(nav: Nav) {
         this.nav = nav;
@@ -29,23 +29,23 @@ class List {
         this.index = 0;
         this.color = ['#0ff', '#9cf', '#ccf', '#fcf', '#cff', '#3cf', '#faf'];
         this.load();
-        this.listItem = $(`.${this.prefix}-list-item`);
+        this.listItem = this.container.querySelector(`.${this.prefix}-list-item`);
         this.contextMenu();
     }
     private globalEvents() {
-        this.nav.bind(Global.NAV_RELOAD, () => {
+        this.nav.on(Global.NAV_RELOAD, () => {
             this.reload();
         });
     }
     private contextMenu() {
-        new Contextmenu(this.container[0], {
+        new Contextmenu(this.container, {
             menu: [],
             changedMode: true,
             cmClass: this.nav.cmClass,
             changedType: 0,
             onChange: (e: MouseEvent) => {
                 const target = e.target as HTMLElement;
-                const id = $(target).data('id');
+                const id = target.getAttribute('data-id');
                 const name = target.textContent;
                 const menu = [
                     {
@@ -73,7 +73,7 @@ class List {
     }
     // 渲染src列表
     load() {
-        this.container.html('');
+        this.container.innerHTML = '';
         this.index = 0;
         const types = this.local.typeList.items;
         const len = this.color.length;
@@ -81,7 +81,7 @@ class List {
             const color = this.color[this.index % len];
             const list = this.local.srcList[item.id];
             if (list && list.length > 0) {
-                this.container.append(new Link($(`<div class="${this.prefix}-list-item"></div>`)[0], {
+                this.container.appendChild(new Link(Utils.parseDom(`<div class="${this.prefix}-list-item"></div>`)[0], {
                     type: item.name,
                     tid: item.id,
                     list,
