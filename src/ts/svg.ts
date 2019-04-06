@@ -1,10 +1,9 @@
-
-import upload from '../svg/upload.svg';
-import download from '../svg/download.svg';
+import upload from '../svg/upload.svg'
+import download from '../svg/download.svg'
 
 const svg: any = {
     upload,
-    download,
-};
+    download
+}
 
-export default svg;
+export default svg
