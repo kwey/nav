@@ -448,10 +448,10 @@ class Utils {
         return new Promise((resolve, reject) => {
             axios
                 .request(config)
-                .then(res => {
+                .then((res: any) => {
                     resolve(res.data)
                 })
-                .catch(err => {
+                .catch((err: any) => {
                     reject(err)
                 })
         })

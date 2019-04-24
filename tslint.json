@@ -3,6 +3,7 @@
         "exclude": ["node_modules/**", "demo/**", "dist/**"]
     },
     "extends": ["tslint-config-alloy"],
+    // "extends": ["tslint-config-prettier"],
     "rules": {
         // "indent":[true, "tabs", 2],
         "ter-indent": [

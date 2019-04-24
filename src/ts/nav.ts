@@ -15,7 +15,7 @@ export interface ElementsInterface {
     [key: string]: any
 }
 
-abstract class Nav {
+abstract class Nav extends emitter {
     config: ConfigInterface
     prefix: string
     cmClass: string
@@ -27,12 +27,12 @@ abstract class Nav {
     file: File
 
     constructor(config: ConfigInterface) {
+        super()
         this.config = config
         this.prefix = 'nav-x'
         this.cmClass = 'nav-cm' // 供右键选择target
         this.container =
             document.querySelector(`.${config.className}`) || document.createElement('div')
-        emitter(this)
         this.init()
         return this
     }
@@ -51,10 +51,6 @@ abstract class Nav {
     reload() {
         this.emit(Global.NAV_RELOAD)
     }
-    abstract on(type: string, listener: EventListener): void
-    abstract once(type: string, listener: EventListener): void
-    abstract off(type: string, listener: EventListener): void
-    abstract emit(type: string, ...args: any[]): void
 }
 
 export default Nav

@@ -21,19 +21,18 @@
     "last 2 versions",
     "not ie 6-10"
   ],
+  "sideEffects": false,
   "dependencies": {
-    "@types/event-emitter": "^0.3.3",
+    "axios": "^0.18.0",
     "event-emitter": "^0.3.5",
     "tslib": "^1.9.3"
   },
   "devDependencies": {
-    "@types/jquery": "^3.3.22",
+    "@types/event-emitter": "^0.3.3",
     "@types/node": "^10.12.0",
-    "ajv": "^6.5.4",
     "art-template": "^4.13.0",
     "art-template-loader": "^1.4.3",
     "autoprefixer": "^9.3.1",
-    "awesome-typescript-loader": "^5.2.1",
     "css-loader": "^1.0.0",
     "cssnano": "^4.1.7",
     "git-rev-sync": "^1.12.0",
