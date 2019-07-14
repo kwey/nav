@@ -13,6 +13,7 @@ class Header {
     local: LocalInterface
     elements: any
     typeMenu: Contextmenu
+    teachWrap: HTMLElement
 
     constructor(nav: Nav) {
         this.nav = nav
@@ -37,11 +38,12 @@ class Header {
             nameInfo: new Input(this.container.querySelector(`.${prefix}-name-input`), {}),
             srcInfo: new Input(this.container.querySelector(`.${prefix}-src-input`), {}),
             submit: new Button(this.container.querySelector(`.${prefix}-add-btn`), {
-                name: '上传'
+                name: '添加'
             }),
             clear: new Button(this.container.querySelector(`.${prefix}-clear`), {
                 name: '清空'
-            })
+            }),
+            teach: this.container.querySelector(`.${prefix}-teach-info`)
         }
     }
 
@@ -75,6 +77,9 @@ class Header {
         })
         this.elements.clear.on('click', () => {
             this.clear()
+        })
+        this.elements.teach.addEventListener('click', () => {
+            this.addTeachImg()
         })
         // 绑定右键事件
         this.typeMenuEvent()
@@ -117,6 +122,7 @@ class Header {
                 <div class="${prefix}-src-input"></div>
                 <div class="${prefix}-add-btn"></div>
                 <div class="${prefix}-clear"></div>
+                <div class="${prefix}-teach-info">使用教程</div>
             </div>`
     }
     // 删除type
@@ -156,6 +162,22 @@ class Header {
                 value: '数据不全',
                 position: 'cb',
                 time: 2000
+            })
+        }
+    }
+    addTeachImg() {
+        if (this.teachWrap) {
+            this.teachWrap.classList.remove(`${this.prefix}-teach-hide`)
+        } else {
+            this.teachWrap = document.createElement('div')
+            this.teachWrap.classList.add(`${this.prefix}-teach`)
+            this.teachWrap.innerHTML = `
+                <div class="${this.prefix}-teach-close">X</div>
+                <image class="${this.prefix}-teach-img" src="//www.webq.top/teach.jpg">
+            `
+            document.body.appendChild(this.teachWrap)
+            this.teachWrap.querySelector(`.${this.prefix}-teach-close`).addEventListener('click', () => {
+                this.teachWrap.classList.add(`${this.prefix}-teach-hide`)
             })
         }
     }
