@@ -94,22 +94,25 @@
         height: 100%;
         background: rgba(0,0,0,0.3);
         z-index: 3;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         &-close {
             position: absolute;
             top: 20px;
             right: 20px;
-            width: 40px;
-            height: 30px;
+            width: 60px;
+            height: 40px;
             background: rgba(0,0,0,0.5);
             color: #fff;
             text-align: center;
             font-size: 18px;
-            line-height: 30px;
+            line-height: 40px;
             cursor: pointer;
         }
         &-img {
-            display: block;
-            width: 100%;
+            width: 1000px;
+            max-height: 100%;
         }
         &.@{prefix}-teach-hide {
             display: none;
