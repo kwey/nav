@@ -1,4 +1,4 @@
-const emitter = require('event-emitter')
+import EventEmitter from 'events'
 import InfoSet from './info-set'
 import Template from './template'
 import Header from './header'
@@ -15,7 +15,7 @@ export interface ElementsInterface {
     [key: string]: any
 }
 
-abstract class Nav extends emitter {
+class Nav extends EventEmitter {
     config: ConfigInterface
     prefix: string
     cmClass: string
@@ -33,8 +33,8 @@ abstract class Nav extends emitter {
         this.cmClass = 'nav-cm' // 供右键选择target
         this.container =
             document.querySelector(`.${config.className}`) || document.createElement('div')
+        console.log(this)
         this.init()
-        return this
     }
 
     init() {

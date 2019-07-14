@@ -87,6 +87,11 @@ class InfoSet {
             })
         return hasType
     }
+    // 清空
+    clearAll() {
+        this.local = Utils.localInfoDefault()
+        Utils.setLocalSettings(`${this.prefix}-kwe`, JSON.stringify(this.local))
+    }
     // 存储到本地
     setLocalSettings(list?: LocalInterface) {
         if (list) {

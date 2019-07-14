@@ -4,4 +4,6 @@ import './less/index.less'
 
 import Nav from './ts/nav'
 
-export { Nav }
+window.Nav = Nav
+
+export default Nav

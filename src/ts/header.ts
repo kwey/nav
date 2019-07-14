@@ -38,6 +38,9 @@ class Header {
             srcInfo: new Input(this.container.querySelector(`.${prefix}-src-input`), {}),
             submit: new Button(this.container.querySelector(`.${prefix}-add-btn`), {
                 name: '上传'
+            }),
+            clear: new Button(this.container.querySelector(`.${prefix}-clear`), {
+                name: '清空'
             })
         }
     }
@@ -69,6 +72,9 @@ class Header {
             if (e.keyCode === 13 || e.charCode === 13) {
                 this.upLoadSrc()
             }
+        })
+        this.elements.clear.on('click', () => {
+            this.clear()
         })
         // 绑定右键事件
         this.typeMenuEvent()
@@ -110,6 +116,7 @@ class Header {
                 <div class="${prefix}-src">src: </div>
                 <div class="${prefix}-src-input"></div>
                 <div class="${prefix}-add-btn"></div>
+                <div class="${prefix}-clear"></div>
             </div>`
     }
     // 删除type
@@ -117,6 +124,10 @@ class Header {
         if (this.nav.infoSet.removeType(id)) {
             this.elements.typeInfo.removeType(id)
         }
+    }
+    // 清空
+    private clear() {
+        this.nav.infoSet.clearAll()
     }
 
     // 上传单条记录 name中含转义字符会导致xml无法获取

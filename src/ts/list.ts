@@ -75,7 +75,7 @@ class List {
     load() {
         this.container.innerHTML = ''
         this.index = 0
-        const types = this.local.typeList.items
+        const types = this.local.typeList.items || []
         const len = this.color.length
         types.forEach((item: SelectListInterface) => {
             const color = this.color[this.index % len]

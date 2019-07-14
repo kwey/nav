@@ -25,7 +25,6 @@ module.exports = (env = {}) => {
         output: {
             path: path.resolve(__dirname, 'dist/'),
             filename: '[name].js',
-            library: 'NAV',
             libraryTarget: 'umd',
         },
         module: modules,
