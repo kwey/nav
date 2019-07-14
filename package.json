@@ -8,8 +8,8 @@
   "license": "ISC",
   "scripts": {
     "prebuild": "rm -rf dist",
-    "build": "webpack --env.gcc --display=errors-only && npm run cp",
-    "debug": "webpack --env.dev",
+    "build": "webpack --env.gcc && npm run cp",
+    "debug": "webpack --env.dev -w",
     "dev": "webpack-dev-server --hot --env.dev",
     "cp": "./push.sh"
   },
@@ -21,7 +21,6 @@
     "last 2 versions",
     "not ie 6-10"
   ],
-  "sideEffects": false,
   "dependencies": {
     "axios": "^0.18.0",
     "perfect-scrollbar": "^1.4.0",
