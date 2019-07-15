@@ -76,7 +76,8 @@ class Header {
             }
         })
         this.elements.clear.on('click', () => {
-            this.clear()
+            this.nav.clear()
+            this.nav.reload()
         })
         this.elements.teach.addEventListener('click', () => {
             this.addTeachImg()
@@ -130,10 +131,6 @@ class Header {
         if (this.nav.infoSet.removeType(id)) {
             this.elements.typeInfo.removeType(id)
         }
-    }
-    // 清空
-    private clear() {
-        this.nav.infoSet.clearAll()
     }
 
     // 上传单条记录 name中含转义字符会导致xml无法获取

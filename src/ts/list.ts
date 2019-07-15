@@ -75,6 +75,7 @@ class List {
     load() {
         this.container.innerHTML = ''
         this.index = 0
+        this.local = this.nav.infoSet.local
         const types = this.local.typeList.items || []
         const len = this.color.length
         types.forEach((item: SelectListInterface) => {

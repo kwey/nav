@@ -45,11 +45,17 @@ class Nav extends EventEmitter {
         this.list = new List(this)
         this.file = new File(this)
     }
+
     getData() {
         return this.infoSet.local
     }
+
     reload() {
         this.emit(Global.NAV_RELOAD)
+    }
+
+    clear() {
+        this.emit(Global.NAV_CLEAR)
     }
 }
 

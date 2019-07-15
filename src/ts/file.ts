@@ -1,4 +1,5 @@
 import Utils from './utils'
+import Global from './global'
 
 import Nav, { ElementsInterface } from './nav'
 import svg from './svg'
@@ -44,25 +45,17 @@ class File {
             return false
         })
         // 上传文件
-        const browser = Utils.browser
-        if (!browser.version.trident && !browser.version.edge) {
-            this.elements.addFile.addEventListener('change', () => {
-                this.fileChange()
-            })
-        } else {
-            // IE系的浏览器因为浏览器本身的bug无法用click()触发input元素的change事件,这里做下处理.
-            setTimeout(() => {
-                if (this.elements.addFile[0].getAttribute('value').length > 0) {
-                    this.fileChange()
-                }
-            }, 0)
-        }
+        this.elements.addFile.addEventListener('change', () => {
+            this.fileChange()
+        })
+        // clear
+        this.nav.on(Global.NAV_CLEAR, () => {
+            this.elements.addFile.value = ''
+        })
     }
     private TPL() {
         const { prefix } = this
-        return `<span class="${prefix}-file-upload">${
-            svg.upload
-        }<input type="file" class="${prefix}-file-drop"></span>
+        return `<span class="${prefix}-file-upload">${svg.upload}<input type="file" class="${prefix}-file-drop" accept=".json,.xml"></span>
                 <span class="${prefix}-file-download">${svg.upload}</span>`
     }
     // 上传文件

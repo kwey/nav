@@ -1,4 +1,5 @@
 import Utils from './utils'
+import Global from './global'
 
 import Nav from './nav'
 import { SelectOptionsInterface, SelectListInterface } from '../../ui/src/ts/select'
@@ -24,6 +25,7 @@ class InfoSet {
         this.nav = nav
         this.prefix = this.nav.prefix
         this.init()
+        this.golbalEvents()
     }
 
     init() {
@@ -42,6 +44,12 @@ class InfoSet {
                 this.setLocalSettings()
             })
         }
+    }
+    golbalEvents() {
+        // clear
+        this.nav.on(Global.NAV_CLEAR, () => {
+            this.clearAll()
+        })
     }
     // 保存类型
     setTypeInfo(info: SelectListInterface, cb?: Function) {
